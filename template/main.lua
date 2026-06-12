@@ -10,6 +10,7 @@ end
 
 function _init()
 	print("Init started!")
+	print("platform =", cookie.PLATFORM)
 	if cookie.IS_DEV then
 		print("Cookie is dev is on!")
 	else
@@ -18,15 +19,16 @@ function _init()
 end
 
 function _update(dt)
-
+	--print("Update: elapsed =", cookie.elapsed)
 end
 
 function _draw(dt)
 	local selected_color = gfx.COLOR_GREEN
 
 	if cookie.IS_DEV then
-		selected_color = gfx.COLOR_BLUE
+		selected_color = gfx.COLOR_YELLOW
 	end
 
 	gfx.clear(selected_color)
+	gfx.rect(0, 0, 100, 100, gfx.COLOR_RED)
 end

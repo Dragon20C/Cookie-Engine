@@ -27,6 +27,7 @@ register_gfx :: proc(L: ^lua.State) {
 	register_color(L, "COLOR_YELLOW", 5)
 
 	register_function(L, "clear", clear)
+	register_function(L, "rect", rect)
 
 	lua.setglobal(L, "gfx")
 
@@ -36,7 +37,12 @@ clear :: proc "c" (L: ^lua.State) -> i32 {
 	// default clear always happens
 	current_color := colors[0]
 
-	if lua.gettop(L) >= 1 && lua.isnumber(L, 1) {
+	if !lua.isnumber(L, 1) {
+		lua.L_error(L, "gfx.clear expects 1 argument")
+		return 0
+	}
+
+	if lua.gettop(L) >= 1 {
 		v := lua.tointeger(L, 1)
 		// make sure its in range of 0 to colors length - 1
 		if v <= len(colors) - 1 {
@@ -46,5 +52,45 @@ clear :: proc "c" (L: ^lua.State) -> i32 {
 	}
 
 	rl.ClearBackground(current_color)
+	return 0
+}
+
+rect :: proc "c" (L: ^lua.State) -> i32 {
+	if lua.gettop(L) != 5 {
+		lua.L_error(L, "gfx.rect(x, y, width, height, color) expects 5 arguments")
+	}
+
+	if !lua.isnumber(L, 1) {
+		lua.L_error(L, "gfx.rect: x must be a number")
+	}
+
+	if !lua.isnumber(L, 2) {
+		lua.L_error(L, "gfx.rect: y must be a number")
+	}
+
+	if !lua.isnumber(L, 3) {
+		lua.L_error(L, "gfx.rect: width must be a number")
+	}
+
+	if !lua.isnumber(L, 4) {
+		lua.L_error(L, "gfx.rect: height must be a number")
+	}
+
+	if !lua.isnumber(L, 5) {
+		lua.L_error(L, "gfx.rect: color must be a number")
+	}
+
+	x := cast(i32)lua.tonumber(L, 1)
+	y := cast(i32)lua.tonumber(L, 2)
+	width := cast(i32)lua.tonumber(L, 3)
+	height := cast(i32)lua.tonumber(L, 4)
+	color := cast(i32)lua.tonumber(L, 5)
+
+	if color < 0 || color >= len(colors) {
+		lua.L_error(L, "gfx.rect: color index out of range")
+		return 0
+	}
+
+	rl.DrawRectangle(x, y, width, height, colors[color])
 	return 0
 }

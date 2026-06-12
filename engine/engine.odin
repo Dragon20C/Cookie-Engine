@@ -2,6 +2,7 @@ package engine
 
 import gfx "/bindings/gfx"
 import fmt "core:fmt"
+import "core:os"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
@@ -9,6 +10,7 @@ Engine :: struct {
 	L:          ^lua.State,
 	game_title: cstring,
 	game_id:    cstring,
+	platform:   cstring,
 	width:      lua.Integer,
 	height:     lua.Integer,
 	is_dev:     bool,
@@ -22,6 +24,7 @@ init_engine :: proc() -> Engine {
 		L = L,
 		game_title = "Unknown",
 		game_id = "GameID",
+		platform = "Unknown",
 		width = 640,
 		height = 360,
 		is_dev = false,
@@ -35,6 +38,7 @@ present_engine_config :: proc() {
 	}
 	fmt.println("Title   : ", engine.game_title)
 	fmt.println("ID      : ", engine.game_id)
+	fmt.println("Platform: ", engine.platform)
 	fmt.println("Width   : ", engine.width)
 	fmt.println("Height  : ", engine.height)
 	fmt.println("Dev Mode: ", engine.is_dev)
@@ -52,6 +56,7 @@ run :: proc(path: cstring, is_dev: bool) {
 	// initialize the engine and lua state.
 	engine = init_engine()
 
+	engine.platform = ODIN_OS_STRING
 	engine.is_dev = is_dev
 
 	// register gfx functions.
@@ -210,10 +215,13 @@ register_cookie :: proc() {
 	lua.newtable(engine.L)
 
 	lua.pushinteger(engine.L, engine.width)
-	lua.setfield(engine.L, -2, "WIDTH")
+	lua.setfield(engine.L, -2, "Width")
 
 	lua.pushinteger(engine.L, engine.height)
-	lua.setfield(engine.L, -2, "HEIGHT")
+	lua.setfield(engine.L, -2, "Height")
+
+	lua.pushstring(engine.L, engine.platform)
+	lua.setfield(engine.L, -2, "PLATFORM")
 
 	lua.pushboolean(engine.L, cast(b32)engine.is_dev)
 	lua.setfield(engine.L, -2, "IS_DEV")
