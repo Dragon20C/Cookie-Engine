@@ -1,9 +1,9 @@
 package engine
 
+import gfx "/bindings/gfx"
 import fmt "core:fmt"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
-
 
 Engine :: struct {
 	L:          ^lua.State,
@@ -51,6 +51,10 @@ engine: Engine
 run :: proc(path: cstring, is_dev: bool) {
 	// initialize the engine and lua state.
 	engine = init_engine()
+
+	// register gfx functions.
+	gfx.register_gfx(engine.L)
+
 	engine.is_dev = is_dev
 	// attempt to load the main.lua file.
 	err := lua.L_dofile(engine.L, path)
@@ -142,13 +146,14 @@ load_config :: proc() -> bool {
 }
 
 update :: proc() {
-
+	lua_update()
 }
 
 draw :: proc() {
 	rl.BeginDrawing()
-	defer rl.EndDrawing()
-	rl.ClearBackground(rl.RAYWHITE)
+	lua_draw()
+	rl.EndDrawing()
+
 }
 init :: proc() {
 	// call the init function in lua.
@@ -161,4 +166,29 @@ init :: proc() {
 	}
 	// call the _init function.
 	lua.call(engine.L, 0, 0)
+}
+
+lua_draw :: proc() {
+	lua.getglobal(engine.L, "_draw")
+	if !lua.isfunction(engine.L, -1) {
+		lua.pop(engine.L, 1)
+		return
+	}
+
+	dt := lua.Number(rl.GetFrameTime())
+	lua.pushnumber(engine.L, dt)
+
+	lua.call(engine.L, 1, 0)
+}
+
+lua_update :: proc() {
+	lua.getglobal(engine.L, "_update")
+	if !lua.isfunction(engine.L, -1) {
+		lua.pop(engine.L, 1)
+		return
+	}
+	dt := lua.Number(rl.GetFrameTime())
+	lua.pushnumber(engine.L, dt)
+
+	lua.call(engine.L, 1, 0)
 }

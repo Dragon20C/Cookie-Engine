@@ -17,5 +17,5 @@ function _update(dt)
 end
 
 function _draw(dt)
-
+	gfx.clear(gfx.COLOR_GREEN) --gfx.COLOR_BLUE
 end
