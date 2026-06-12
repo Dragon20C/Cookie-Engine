@@ -38,8 +38,8 @@ clear :: proc "c" (L: ^lua.State) -> i32 {
 
 	if lua.gettop(L) >= 1 && lua.isnumber(L, 1) {
 		v := lua.tointeger(L, 1)
-
-		if v <= len(colors) {
+		// make sure its in range of 0 to colors length - 1
+		if v <= len(colors) - 1 {
 			current_color = colors[v]
 		}
 

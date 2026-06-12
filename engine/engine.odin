@@ -52,10 +52,12 @@ run :: proc(path: cstring, is_dev: bool) {
 	// initialize the engine and lua state.
 	engine = init_engine()
 
+	engine.is_dev = is_dev
+
 	// register gfx functions.
 	gfx.register_gfx(engine.L)
 
-	engine.is_dev = is_dev
+
 	// attempt to load the main.lua file.
 	err := lua.L_dofile(engine.L, path)
 	// if error returns non-zero we handle the error.
@@ -68,20 +70,31 @@ run :: proc(path: cstring, is_dev: bool) {
 	}
 
 	ok: bool = load_config()
-
-	if ok {
+	if ok && is_dev {
 		present_engine_config()
 	}
+
+	if !ok {
+		fmt.println("Failed to load config.")
+		return
+	}
+
+	// register cookie this late because we need config to be loaded first.
+	register_cookie()
+
+
 	WIDTH: i32 = cast(i32)engine.width
 	HEIGHT: i32 = cast(i32)engine.height
 
 	rl.InitWindow(WIDTH, HEIGHT, engine.game_title)
-	defer rl.CloseWindow()
 	defer shutdown()
+	defer rl.CloseWindow()
+
 	rl.SetTargetFPS(60)
 
 	init()
 	for !rl.WindowShouldClose() {
+		update_elapsed_time()
 		update()
 		draw()
 	}
@@ -191,4 +204,31 @@ lua_update :: proc() {
 	lua.pushnumber(engine.L, dt)
 
 	lua.call(engine.L, 1, 0)
+}
+
+register_cookie :: proc() {
+	lua.newtable(engine.L)
+
+	lua.pushinteger(engine.L, engine.width)
+	lua.setfield(engine.L, -2, "WIDTH")
+
+	lua.pushinteger(engine.L, engine.height)
+	lua.setfield(engine.L, -2, "HEIGHT")
+
+	lua.pushboolean(engine.L, cast(b32)engine.is_dev)
+	lua.setfield(engine.L, -2, "IS_DEV")
+
+	lua.pushnumber(engine.L, cast(lua.Number)rl.GetTime())
+	lua.setfield(engine.L, -2, "elapsed")
+
+	lua.setglobal(engine.L, "cookie")
+}
+
+update_elapsed_time :: proc() {
+	lua.getglobal(engine.L, "cookie")
+
+	lua.pushnumber(engine.L, cast(lua.Number)rl.GetTime())
+	lua.setfield(engine.L, -2, "elapsed")
+
+	lua.pop(engine.L, 1) // pop cookie table
 }
