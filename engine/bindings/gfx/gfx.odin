@@ -4,7 +4,7 @@ import "core:fmt"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
-colors: [6]rl.Color = {rl.WHITE, rl.BLACK, rl.RED, rl.GREEN, rl.BLUE, rl.YELLOW}
+colors: [16]rl.Color = {}
 
 register_function :: proc(L: ^lua.State, name: cstring, fn: lua.CFunction) {
 	lua.pushcfunction(L, fn)
@@ -19,17 +19,32 @@ register_color :: proc(L: ^lua.State, name: cstring, index: lua.Integer) {
 register_gfx :: proc(L: ^lua.State) {
 	lua.newtable(L)
 	// registering color constants, I know there is a better way... just lazy.
-	register_color(L, "COLOR_WHITE", 0)
-	register_color(L, "COLOR_BLACK", 1)
-	register_color(L, "COLOR_RED", 2)
-	register_color(L, "COLOR_GREEN", 3)
-	register_color(L, "COLOR_BLUE", 4)
-	register_color(L, "COLOR_YELLOW", 5)
+	register_color_palette(L)
 
 	register_function(L, "clear", clear)
 	register_function(L, "rect", rect)
 
 	lua.setglobal(L, "gfx")
+
+}
+
+register_color_palette :: proc(L: ^lua.State) {
+	register_color(L, "COLOR_BLACK", 0)
+	register_color(L, "COLOR_BROWN", 1)
+	register_color(L, "COLOR_TANG", 2)
+	register_color(L, "COLOR_ORANGE", 3)
+	register_color(L, "COLOR_CARDBOARD", 4)
+	register_color(L, "COLOR_YELLOW", 5)
+	register_color(L, "COLOR_WHITE", 6)
+	register_color(L, "COLOR_LEAF", 7)
+	register_color(L, "COLOR_MINT", 8)
+	register_color(L, "COLOR_GREEN", 9)
+	register_color(L, "COLOR_DARK_BLUE", 10)
+	register_color(L, "COLOR_BLUE", 11)
+	register_color(L, "COLOR_PURPLE", 12)
+	register_color(L, "COLOR_PINK", 13)
+	register_color(L, "COLOR_RED", 14)
+	register_color(L, "COLOR_DARK_RED", 15)
 
 }
 

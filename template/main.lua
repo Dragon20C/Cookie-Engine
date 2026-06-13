@@ -23,12 +23,12 @@ function _update(dt)
 end
 
 function _draw(dt)
-	local selected_color = gfx.COLOR_GREEN
+	local selected_color = gfx.COLOR_MINT
 
 	if cookie.IS_DEV then
-		selected_color = gfx.COLOR_YELLOW
+		selected_color = gfx.COLOR_GREEN
 	end
 
 	gfx.clear(selected_color)
-	gfx.rect(0, 0, 100, 100, gfx.COLOR_RED)
+	gfx.rect(100, 50, 32, 32, gfx.COLOR_PINK)
 end

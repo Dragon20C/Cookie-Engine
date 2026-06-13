@@ -3,6 +3,8 @@ package engine
 import gfx "/bindings/gfx"
 import fmt "core:fmt"
 import "core:os"
+import "core:strconv"
+import "core:strings"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
@@ -15,6 +17,8 @@ Engine :: struct {
 	height:     lua.Integer,
 	is_dev:     bool,
 }
+
+working_dir: string = ""
 
 init_engine :: proc() -> Engine {
 	L := lua.L_newstate()
@@ -52,7 +56,23 @@ shutdown :: proc() {
 
 engine: Engine
 
-run :: proc(path: cstring, is_dev: bool) {
+run :: proc(path: string, is_dev: bool) {
+	working_dir = path
+	fmt.println("Working Dir: ", working_dir)
+
+	palette := read_color_palette(strings.concatenate({working_dir, "palette.hex"}))
+	//fmt.println("Palette: ", palette)
+
+	main_file := strings.concatenate({working_dir, "main.lua"})
+
+	if !os.is_file(main_file) {
+		fmt.println("A main.lua file does not exist in the directory.")
+		fmt.println("Path: ", working_dir)
+		return
+	}
+
+	current_dir := strings.clone_to_cstring(main_file)
+
 	// initialize the engine and lua state.
 	engine = init_engine()
 
@@ -60,11 +80,12 @@ run :: proc(path: cstring, is_dev: bool) {
 	engine.is_dev = is_dev
 
 	// register gfx functions.
+	gfx.colors = palette
 	gfx.register_gfx(engine.L)
 
 
 	// attempt to load the main.lua file.
-	err := lua.L_dofile(engine.L, path)
+	err := lua.L_dofile(engine.L, current_dir)
 	// if error returns non-zero we handle the error.
 	if err != 0 {
 		msg := lua.tostring(engine.L, -1)
@@ -173,6 +194,7 @@ draw :: proc() {
 	rl.EndDrawing()
 
 }
+
 init :: proc() {
 	// call the init function in lua.
 	lua.getglobal(engine.L, "_init")
@@ -239,4 +261,32 @@ update_elapsed_time :: proc() {
 	lua.setfield(engine.L, -2, "elapsed")
 
 	lua.pop(engine.L, 1) // pop cookie table
+}
+
+read_color_palette :: proc(filepath: string) -> [16]rl.Color {
+	data, err := os.read_entire_file(filepath, context.allocator)
+	if err != nil {
+		// could not read file
+		return [16]rl.Color{}
+	}
+	defer delete(data, context.allocator)
+
+	fmt.println("Reading color palette from", filepath)
+	palette := [16]rl.Color{}
+	index := u32(0)
+	it := string(data)
+	for line in strings.split_lines_iterator(&it) {
+		value, ok := strconv.parse_uint(line, 16)
+		if !ok {
+			fmt.println("Invalid hex:", line)
+			continue
+		}
+		//fmt.printf("0x%08X\n", value)
+		value = (value << 8) | 0xFF
+		color := rl.GetColor(cast(u32)value)
+		//fmt.println(color)
+		palette[index] = color
+		index += 1
+	}
+	return palette
 }

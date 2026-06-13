@@ -2,18 +2,34 @@
 --- The graphics module definitions.
 
 ---@class Cookie.Gfx
----@field COLOR_WHITE	integer 0
----@field COLOR_BLACK	integer 1
----@field COLOR_RED		integer 2
----@field COLOR_GREEN	integer 3
----@field COLOR_BLUE	integer 4
----@field COLOR_YELLOW 	integer 5
+---@field COLOR_BLACK		integer 0
+---@field COLOR_BROWN		integer 1
+---@field COLOR_TANG		integer 2
+---@field COLOR_ORANGE		integer 3
+---@field COLOR_CARDBOARD	integer 4
+---@field COLOR_YELLOW		integer 5
+---@field COLOR_WHITE		integer 6
+---@field COLOR_LEAF		integer 7
+---@field COLOR_MINT		integer 8
+---@field COLOR_GREEN		integer 9
+---@field COLOR_DARK_BLUE	integer 10
+---@field COLOR_BLUE		integer 11
+---@field COLOR_PURPLE		integer 12
+---@field COLOR_PINK		integer 13
+---@field COLOR_RED			integer 14
+---@field COLOR_DARK_RED	integer 15
 
 gfx = {}
 
 ---clears the whole screen with a given color.
 ---@param color integer
 function gfx.clear(color) end
+
+---draws a sprite on the screen.
+---@param index integer
+---@param x integer
+---@param y integer
+function gfx.sprite(index, x, y) end
 
 ---draws text on the screen.
 ---@param text string

@@ -23,7 +23,7 @@ main :: proc() {
 	case "dev":
 		start_engine(args, true)
 	case "export":
-		fmt.printfln("Exporting game!")
+		fmt.println("Exporting game!")
 	case:
 		fmt.println("Unknown command:", args[1])
 	}
@@ -106,15 +106,8 @@ start_engine :: proc(args: []string, is_dev: bool) {
 	if current_dir[len(current_dir) - 1] != '/' {
 		current_dir = strings.concatenate({current_dir, "/"})
 	}
-	current_dir = strings.concatenate({current_dir, "main.lua"})
 
-	if !os.is_file(current_dir) {
-		fmt.println("A main.lua file does not exist in the directory.")
-		return
-	}
-	game_path: cstring = strings.clone_to_cstring(current_dir)
-
-	engine.run(game_path, is_dev)
+	engine.run(current_dir, is_dev)
 }
 
 is_valid_project_name :: proc(name: string) -> bool {
