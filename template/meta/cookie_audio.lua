@@ -14,6 +14,9 @@ function sfx.play(sound) end
 --- @param pan number pan of the sound effect.
 function sfx.play_adv(sound, volume, pitch, pan) end
 
+---stops all currently playing sound effects
+function sfx.stop_all() end
+
 music = {}
 
 ---Plays a music track from the music folder.
