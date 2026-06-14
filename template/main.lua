@@ -5,6 +5,7 @@ function _config()
 		game_id = "GameID",
 		width = 640,
 		height = 360,
+		scale = 1
 	}
 end
 
@@ -23,12 +24,12 @@ function _update(dt)
 end
 
 function _draw(dt)
-	local selected_color = gfx.COLOR_MINT
+	local selected_color = gfx.COLOR_DARK_RED
 
 	if cookie.IS_DEV then
-		selected_color = gfx.COLOR_GREEN
+		selected_color = gfx.COLOR_MINT
 	end
-
+	gfx.rect(0, 0, cookie.Width, cookie.Height, selected_color)
 	gfx.clear(selected_color)
 	gfx.rect(100, 50, 32, 32, gfx.COLOR_PINK)
 end

@@ -1,25 +1,25 @@
 ---@meta
 --- The graphics module definitions.
 
----@class Cookie.Gfx
----@field COLOR_BLACK		integer 0
----@field COLOR_BROWN		integer 1
----@field COLOR_TANG		integer 2
----@field COLOR_ORANGE		integer 3
----@field COLOR_CARDBOARD	integer 4
----@field COLOR_YELLOW		integer 5
----@field COLOR_WHITE		integer 6
----@field COLOR_LEAF		integer 7
----@field COLOR_MINT		integer 8
----@field COLOR_GREEN		integer 9
----@field COLOR_DARK_BLUE	integer 10
----@field COLOR_BLUE		integer 11
----@field COLOR_PURPLE		integer 12
----@field COLOR_PINK		integer 13
----@field COLOR_RED			integer 14
----@field COLOR_DARK_RED	integer 15
+---Palette of colors available for use in the graphics module.
 
 gfx = {}
+gfx.COLOR_BLACK = 0
+gfx.COLOR_BROWN = 1
+gfx.COLOR_TANG = 2
+gfx.COLOR_ORANGE = 3
+gfx.COLOR_CARDBOARD = 4
+gfx.COLOR_YELLOW = 5
+gfx.COLOR_WHITE = 6
+gfx.COLOR_LEAF = 7
+gfx.COLOR_MINT = 8
+gfx.COLOR_GREEN = 9
+gfx.COLOR_DARK_BLUE = 10
+gfx.COLOR_BLUE = 11
+gfx.COLOR_PURPLE = 12
+gfx.COLOR_PINK = 13
+gfx.COLOR_RED = 14
+gfx.COLOR_DARK_RED = 15
 
 ---clears the whole screen with a given color.
 ---@param color integer
