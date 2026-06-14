@@ -7,6 +7,7 @@ package cli
 import "core:fmt"
 import "core:os"
 import "core:path/filepath"
+import c_core "src/core"
 
 template_dir: string = "template"
 
@@ -113,7 +114,8 @@ is_project_name_valid :: proc(project_name: string) -> bool {
 }
 
 run_project :: proc(args: []string, dev: bool) {
-
+	project_path := args[2]
+	c_core.run(project_path, dev)
 }
 
 export_project :: proc(args: []string) {
