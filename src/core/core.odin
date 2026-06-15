@@ -8,10 +8,9 @@ import palette "../palette"
 import "core:fmt"
 import "core:path/filepath"
 import "core:strings"
-
-
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
+
 FIXED_TIMESTEP: f32 = 1.0 / 60.0
 L: ^lua.State
 game_dir: string = ""
@@ -46,35 +45,41 @@ initalize_lua :: proc(path: string) -> bool {
 		return false
 	}
 
-	err := lua.L_dofile(L, strings.clone_to_cstring(file_path))
-	if err != 0 {
-		fmt.println("Error loading main.lua:", err)
-		return false
-	}
-	// Get configuration from _config function
-	if !conf.read_config(L) {
-		lua.close(L)
-		return false
-	}
 	// Load the color palette from the hex file.
 	if !palette.load_palette_from_file(path) {
-		lua.close(L)
-		return false
-	}
-	// Load my bindings here
-	cookie.set_cookie_data(conf.current_config, is_dev)
-	cookie_success := cookie.load(L)
-	if !cookie_success {
 		lua.close(L)
 		return false
 	}
 
 	gfx.load(L)
 	input.load(L)
+	// UNIMPLEMENTED
 	// audio.load(L)
 	// input.load(L)
 
-	// debugging only
+	err := lua.L_dofile(L, strings.clone_to_cstring(file_path))
+
+	if err != 0 {
+		msg := lua.tostring(L, -1)
+		fmt.println("Lua error:", msg)
+		lua.pop(L, 1)
+		lua.close(L)
+		return false
+	}
+
+	// read and update the config file from the _config function
+	if !conf.read_config(L) {
+		lua.close(L)
+		return false
+	}
+
+	// Load the cookie bindings and also use the config from the _config function
+	cookie.set_cookie_data(conf.current_config, is_dev)
+	cookie_success := cookie.load(L)
+	if !cookie_success {
+		lua.close(L)
+		return false
+	}
 	return true
 }
 

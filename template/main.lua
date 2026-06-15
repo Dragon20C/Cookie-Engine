@@ -9,14 +9,17 @@ function _config()
 	}
 end
 
+local size = 64
+
 local red_box = {
-	x = 0,
-	y = 0,
-	size = 64,
-	speed = 150
+	x = 840 / 2 - size / 2, --- Huh, cant access the classes yet... e.g cookie.Width
+	y = 560 / 2 - size / 2,
+	speed = 150,
+
 }
 
 function _init()
+	print("Width", cookie.Width, "Height", cookie.Height)
 end
 
 function _update(dt)
@@ -37,7 +40,7 @@ end
 
 function _draw(dt)
 	gfx.clear(gfx.COLOR_CARDBOARD)
-	gfx.rect(red_box.x, red_box.y, red_box.size, red_box.size, gfx.COLOR_RED)
+	gfx.rect(red_box.x, red_box.y, size, size, gfx.COLOR_RED)
 	-- gfx.rect(100, 100, 100, 100, gfx.COLOR_WHITE)
 	-- gfx.rect_fill(200, 100, 100, 100, gfx.COLOR_LEAF)
 	-- gfx.text("Hello, World!", 100, 80, 24, gfx.COLOR_BLACK)
