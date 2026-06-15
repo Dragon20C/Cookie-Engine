@@ -115,6 +115,23 @@ is_project_name_valid :: proc(project_name: string) -> bool {
 
 run_project :: proc(args: []string, dev: bool) {
 	project_path := args[2]
+
+	if !os.is_dir(project_path) {
+		fmt.println("Project path is not a directory:", project_path)
+		return
+	}
+
+	has_lua_main, err := filepath.join({project_path, "main.lua"})
+	if err != nil {
+		fmt.println("Error joining path:", err)
+		return
+	}
+
+	if !os.is_file(has_lua_main) {
+		fmt.println("No main.lua found in project path:", project_path)
+		return
+	}
+
 	c_core.run(project_path, dev)
 }
 

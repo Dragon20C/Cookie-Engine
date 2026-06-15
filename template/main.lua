@@ -13,6 +13,7 @@ function _init()
 end
 
 function _update(dt)
+	print("Elapsed: " .. cookie.Elapsed)
 end
 
 function _fixed_update(dt)

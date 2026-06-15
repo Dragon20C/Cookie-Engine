@@ -5,7 +5,7 @@
 ---@field Height    number   game height resolution
 ---@field PLATFORM  string   build target: "web" | "macos" | "linux" | "windows" | "unknown"
 ---@field IS_DEV    boolean  true under `cookie dev`; false for `cookie run` and compiled binaries
----@field elapsed   number   wall-clock seconds since session start; updated once per frame before _update
+---@field Elapsed   number   wall-clock seconds since session start; updated once per frame before _update
 cookie = {}
 
 ---config is read once at the begining of game load before init.
