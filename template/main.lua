@@ -10,10 +10,11 @@ function _config()
 end
 
 function _init()
+	print("Init func called!")
 end
 
 function _update(dt)
-	print("Elapsed: " .. cookie.Elapsed)
+	-- print("Elapsed: " .. cookie.Elapsed)
 end
 
 function _fixed_update(dt)

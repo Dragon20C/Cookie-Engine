@@ -41,8 +41,10 @@ handle_loop :: proc() {
 	defer rl.CloseWindow()
 
 	rl.SetTargetFPS(60)
-	accumulator: f32 = 0.0
 
+
+	lua_init()
+	accumulator: f32 = 0.0
 	for !rl.WindowShouldClose() {
 		dt := rl.GetFrameTime()
 		lua_dt := lua.Number(dt)
@@ -131,4 +133,13 @@ lua_draw :: proc(dt: lua.Number) {
 	lua.pushnumber(L, dt)
 
 	lua.call(L, 1, 0)
+}
+
+lua_init :: proc() {
+	lua.getglobal(L, "_init")
+	if !lua.isfunction(L, -1) {
+		lua.pop(L, 1)
+		return
+	}
+	lua.call(L, 0, 0)
 }
