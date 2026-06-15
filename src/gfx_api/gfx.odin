@@ -8,7 +8,7 @@ import rl "vendor:raylib"
 
 load :: proc(L: ^lua.State) {
 	lua.newtable(L)
-	load_color_palette(L)
+	register_color_palette(L)
 	h.register_function(L, "clear", clear)
 	// h.register_function(L, "sprite", sprite)
 	h.register_function(L, "text", text)
@@ -26,7 +26,7 @@ register_color :: proc(L: ^lua.State, name: cstring, index: lua.Integer) {
 	lua.setfield(L, -2, name)
 }
 
-load_color_palette :: proc(L: ^lua.State) {
+register_color_palette :: proc(L: ^lua.State) {
 	register_color(L, "COLOR_BLACK", 0)
 	register_color(L, "COLOR_BROWN", 1)
 	register_color(L, "COLOR_TANG", 2)

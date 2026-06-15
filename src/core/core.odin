@@ -3,6 +3,7 @@ package core
 import conf "../config"
 import cookie "../cookie_api"
 import gfx "../gfx_api"
+import input "../input_api"
 import palette "../palette"
 import "core:fmt"
 import "core:path/filepath"
@@ -69,6 +70,7 @@ initalize_lua :: proc(path: string) -> bool {
 	}
 
 	gfx.load(L)
+	input.load(L)
 	// audio.load(L)
 	// input.load(L)
 
@@ -79,8 +81,9 @@ initalize_lua :: proc(path: string) -> bool {
 handle_loop :: proc() {
 	config := &conf.current_config
 
-	rl.InitWindow(i32(config.width), i32(config.height), strings.clone_to_cstring(config.title))
 	rl.SetConfigFlags(rl.ConfigFlags{.WINDOW_RESIZABLE})
+	rl.InitWindow(i32(config.width), i32(config.height), strings.clone_to_cstring(config.title))
+
 	defer lua.close(L)
 	defer rl.CloseWindow()
 
