@@ -2,6 +2,8 @@ package core
 
 import conf "../config"
 import cookie "../cookie_api"
+import gfx "../gfx_api"
+import palette "../palette"
 import "core:fmt"
 import "core:path/filepath"
 import "core:strings"
@@ -33,10 +35,52 @@ run :: proc(path: string, dev: bool) {
 
 }
 
+initalize_lua :: proc(path: string) -> bool {
+	L = lua.L_newstate()
+	lua.L_openlibs(L)
+
+	file_path, j_err := filepath.join({path, "main.lua"})
+	if j_err != nil {
+		fmt.println("Error joining file path:", j_err)
+		return false
+	}
+
+	err := lua.L_dofile(L, strings.clone_to_cstring(file_path))
+	if err != 0 {
+		fmt.println("Error loading main.lua:", err)
+		return false
+	}
+	// Get configuration from _config function
+	if !conf.read_config(L) {
+		lua.close(L)
+		return false
+	}
+	// Load the color palette from the hex file.
+	if !palette.load_palette_from_file(path) {
+		lua.close(L)
+		return false
+	}
+	// Load my bindings here
+	cookie.set_cookie_data(conf.current_config, is_dev)
+	cookie_success := cookie.load(L)
+	if !cookie_success {
+		lua.close(L)
+		return false
+	}
+
+	gfx.load(L)
+	// audio.load(L)
+	// input.load(L)
+
+	// debugging only
+	return true
+}
+
 handle_loop :: proc() {
 	config := &conf.current_config
 
 	rl.InitWindow(i32(config.width), i32(config.height), strings.clone_to_cstring(config.title))
+	rl.SetConfigFlags(rl.ConfigFlags{.WINDOW_RESIZABLE})
 	defer lua.close(L)
 	defer rl.CloseWindow()
 
@@ -61,48 +105,12 @@ handle_loop :: proc() {
 		lua_update(lua_dt)
 
 		rl.BeginDrawing()
-		rl.ClearBackground(rl.BLUE)
+		//rl.ClearBackground(rl.BLUE)
 		lua_draw(lua_dt)
 		rl.EndDrawing()
 	}
 }
 
-initalize_lua :: proc(path: string) -> bool {
-	L = lua.L_newstate()
-	lua.L_openlibs(L)
-
-	file_path, j_err := filepath.join({path, "main.lua"})
-	if j_err != nil {
-		fmt.println("Error joining file path:", j_err)
-		return false
-	}
-
-	err := lua.L_dofile(L, strings.clone_to_cstring(file_path))
-	if err != 0 {
-		fmt.println("Error loading main.lua:", err)
-		return false
-	}
-
-	// Get configuration from _config function
-	if !conf.read_config(L) {
-		lua.close(L)
-		return false
-	}
-
-	// Load my bindings here
-	cookie.set_cookie_data(conf.current_config, is_dev)
-	cookie_success := cookie.load(L)
-	if !cookie_success {
-		lua.close(L)
-		return false
-	}
-	// gfx.load(L)
-	// audio.load(L)
-	// input.load(L)
-
-	// debugging only
-	return true
-}
 
 lua_update :: proc(dt: lua.Number) {
 	lua.getglobal(L, "_update")

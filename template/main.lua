@@ -10,15 +10,19 @@ function _config()
 end
 
 function _init()
-	print("Init func called!")
 end
 
 function _update(dt)
-	-- print("Elapsed: " .. cookie.Elapsed)
 end
 
 function _fixed_update(dt)
 end
 
 function _draw(dt)
+	gfx.clear(gfx.COLOR_CARDBOARD)
+	gfx.rect(100, 100, 100, 100, gfx.COLOR_WHITE)
+	gfx.rect_fill(200, 100, 100, 100, gfx.COLOR_LEAF)
+	gfx.text("Hello, World!", 100, 80, 24, gfx.COLOR_BLACK)
+	gfx.circle(300, 100, 50, gfx.COLOR_WHITE)
+	gfx.circle_fill(300, 100, 50, gfx.COLOR_RED)
 end
