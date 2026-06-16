@@ -1,15 +1,24 @@
 local size = 64
 local red_box = {
-	x = cookie.Width / 2 - size / 2, --- Huh, cant access the classes yet... e.g cookie.Width
+	x = cookie.Width / 2 - size / 2,
 	y = cookie.Height / 2 - size / 2,
 	speed = 150,
 }
+
+local timer = 0.0
+local reset_number = 0.25
 
 function _init()
 	print("Width", cookie.Width, "Height", cookie.Height)
 end
 
 function _update(dt)
+	timer = timer + dt
+	if timer >= reset_number then
+		timer = 0.0
+		local x, y = input.mouse_position()
+		print("Mouse position x = ", x, "y = ", y)
+	end
 end
 
 function _fixed_update(dt)

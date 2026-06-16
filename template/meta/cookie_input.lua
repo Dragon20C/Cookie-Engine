@@ -7,6 +7,11 @@ input.RIGHT = 1
 input.UP = 2
 input.DOWN = 3
 
+--- Returns the current mouse position.
+---@return integer x position of the mouse.
+---@return integer y position of the mouse.
+function input.mouse_position() end
+
 --- Returns whether the given key is currently pressed.
 ---@param key integer the key to check.
 ---@return boolean once the key is pressed.

@@ -20,6 +20,7 @@ load :: proc(L: ^lua.State) {
 	h.register_function(L, "released", released)
 	h.register_function(L, "held", held)
 	h.register_function(L, "to_string", to_string)
+	h.register_function(L, "mouse_position", mouse_position)
 
 	lua.setglobal(L, "input")
 }
@@ -34,6 +35,12 @@ register_keys :: proc(L: ^lua.State) {
 register_key_map :: proc(L: ^lua.State, index: lua.Integer, key: cstring) {
 	lua.pushinteger(L, index)
 	lua.setfield(L, -2, key)
+}
+
+mouse_position :: proc "c" (L: ^lua.State) -> i32 {
+	lua.pushinteger(L, lua.Integer(rl.GetMouseX()))
+	lua.pushinteger(L, lua.Integer(rl.GetMouseY()))
+	return 2
 }
 
 pressed :: proc "c" (L: ^lua.State) -> i32 {
