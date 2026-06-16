@@ -1,21 +1,8 @@
-function _config()
-	---@type Cookie.Config
-	return {
-		title = "Cookie Game",
-		id = "Dragon20C.CookieGame",
-		width = 840,
-		height = 560,
-		scale = 1.2
-	}
-end
-
 local size = 64
-
 local red_box = {
-	x = 840 / 2 - size / 2, --- Huh, cant access the classes yet... e.g cookie.Width
-	y = 560 / 2 - size / 2,
+	x = cookie.Width / 2 - size / 2, --- Huh, cant access the classes yet... e.g cookie.Width
+	y = cookie.Height / 2 - size / 2,
 	speed = 150,
-
 }
 
 function _init()

@@ -51,6 +51,30 @@ initalize_lua :: proc(path: string) -> bool {
 		return false
 	}
 
+	conf_path, conf_err := filepath.join({path, "conf.lua"})
+	if conf_err != nil {
+		fmt.println("Error joining file path:", conf_err)
+		return false
+	}
+	// Create a lua state for getting the config
+	CONF_L := lua.L_newstate()
+	lua.L_openlibs(CONF_L)
+	lua.L_dofile(CONF_L, strings.clone_to_cstring(conf_path))
+	// read and update the config file from the _config function
+	if !conf.read_config(CONF_L) {
+		lua.close(CONF_L)
+		lua.close(L)
+		return false
+	}
+	lua.close(CONF_L)
+
+	// Load the cookie bindings and also use the config from the _config function
+	cookie.set_cookie_data(conf.current_config, is_dev)
+	cookie_success := cookie.load(L)
+	if !cookie_success {
+		lua.close(L)
+		return false
+	}
 	gfx.load(L)
 	input.load(L)
 	// UNIMPLEMENTED
@@ -63,20 +87,6 @@ initalize_lua :: proc(path: string) -> bool {
 		msg := lua.tostring(L, -1)
 		fmt.println("Lua error:", msg)
 		lua.pop(L, 1)
-		lua.close(L)
-		return false
-	}
-
-	// read and update the config file from the _config function
-	if !conf.read_config(L) {
-		lua.close(L)
-		return false
-	}
-
-	// Load the cookie bindings and also use the config from the _config function
-	cookie.set_cookie_data(conf.current_config, is_dev)
-	cookie_success := cookie.load(L)
-	if !cookie_success {
 		lua.close(L)
 		return false
 	}
