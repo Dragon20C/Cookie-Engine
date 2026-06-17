@@ -6,6 +6,7 @@ input.LEFT = 0
 input.RIGHT = 1
 input.UP = 2
 input.DOWN = 3
+input.SPACE = 4
 
 --- Returns the current mouse position.
 ---@return integer x position of the mouse.

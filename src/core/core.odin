@@ -2,8 +2,10 @@ package core
 
 import conf "../config"
 import cookie "../cookie_api"
+import event "../event_api"
 import gfx "../gfx_api"
 import input "../input_api"
+
 import palette "../palette"
 import "core:fmt"
 import "core:path/filepath"
@@ -77,6 +79,7 @@ initalize_lua :: proc(path: string) -> bool {
 	}
 	gfx.load(L)
 	input.load(L)
+	event.load(L)
 	// UNIMPLEMENTED
 	// audio.load(L)
 	// input.load(L)
@@ -113,7 +116,7 @@ handle_loop :: proc() {
 		cookie.update_elapsed(L, f64(dt))
 
 		accumulator += dt
-
+		event.process_queue(L)
 		for accumulator >= FIXED_TIMESTEP {
 			lua_fixed_update(lua.Number(FIXED_TIMESTEP))
 			accumulator -= FIXED_TIMESTEP

@@ -4,8 +4,8 @@ import h "../helper"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
-keys: [4]rl.KeyboardKey = {}
-key_strings: [4]cstring = {"left", "right", "up", "down"}
+keys: [5]rl.KeyboardKey = {}
+key_strings: [5]cstring = {"left", "right", "up", "down", "space"}
 
 load :: proc(L: ^lua.State) {
 	// This is temporary.
@@ -13,6 +13,7 @@ load :: proc(L: ^lua.State) {
 	keys[1] = rl.KeyboardKey.D
 	keys[2] = rl.KeyboardKey.W
 	keys[3] = rl.KeyboardKey.S
+	keys[4] = rl.KeyboardKey.SPACE
 
 	lua.newtable(L)
 	register_keys(L)
@@ -30,6 +31,7 @@ register_keys :: proc(L: ^lua.State) {
 	register_key_map(L, 1, "RIGHT")
 	register_key_map(L, 2, "UP")
 	register_key_map(L, 3, "DOWN")
+	register_key_map(L, 4, "SPACE")
 }
 
 register_key_map :: proc(L: ^lua.State, index: lua.Integer, key: cstring) {
@@ -48,7 +50,7 @@ pressed :: proc "c" (L: ^lua.State) -> i32 {
 		lua.L_error(L, "expected integer key index")
 	}
 	key_index := lua.tointeger(L, 1)
-	if key_index < 0 || key_index >= 4 {
+	if key_index < 0 || key_index >= 5 {
 		lua.L_error(L, "key index out of range")
 	}
 	if rl.IsKeyPressed(keys[key_index]) {
@@ -64,7 +66,7 @@ released :: proc "c" (L: ^lua.State) -> i32 {
 		lua.L_error(L, "expected integer key index")
 	}
 	key_index := lua.tointeger(L, 1)
-	if key_index < 0 || key_index >= 4 {
+	if key_index < 0 || key_index >= 5 {
 		lua.L_error(L, "key index out of range")
 	}
 	if rl.IsKeyReleased(keys[key_index]) {
@@ -80,7 +82,7 @@ held :: proc "c" (L: ^lua.State) -> i32 {
 		lua.L_error(L, "expected integer key index")
 	}
 	key_index := lua.tointeger(L, 1)
-	if key_index < 0 || key_index >= 4 {
+	if key_index < 0 || key_index >= 5 {
 		lua.L_error(L, "key index out of range")
 	}
 	if rl.IsKeyDown(keys[key_index]) {
@@ -96,7 +98,7 @@ to_string :: proc "c" (L: ^lua.State) -> i32 {
 		lua.L_error(L, "expected integer key index")
 	}
 	key_index := lua.tointeger(L, 1)
-	if key_index < 0 || key_index >= 4 {
+	if key_index < 0 || key_index >= 5 {
 		lua.L_error(L, "key index out of range")
 	}
 	lua.pushstring(L, key_strings[key_index])
