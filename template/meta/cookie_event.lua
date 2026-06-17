@@ -2,9 +2,6 @@
 
 event = {}
 
---- create an event to the event queue
---- param event_id integer
--- function event.create(event_id) end
 
 --- connects a callback to an event
 --- @param event_id integer

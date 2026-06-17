@@ -20,6 +20,7 @@ function _init()
 	--- Recommend connecting events at init time to make sure functions are already.
 	event.connect(events.hello, Print_hello)
 	event.connect(events.reset, Reset_box_position)
+	event.connect(events.reset, Do_something_else)
 end
 
 function _update(dt)
@@ -35,6 +36,7 @@ function _fixed_update(dt)
 	if input.pressed(input.SPACE) then
 		--- Currently, params are not supported, yet...
 		event.call(events.reset)
+		event.disconnect(events.reset, Do_something_else)
 	end
 
 
@@ -68,4 +70,8 @@ function Reset_box_position()
 	print("Calling!")
 	red_box.x = cookie.Width / 2 - size / 2
 	red_box.y = cookie.Height / 2 - size / 2
+end
+
+function Do_something_else()
+	print("Doing something else")
 end

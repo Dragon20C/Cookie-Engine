@@ -117,6 +117,7 @@ handle_loop :: proc() {
 
 		accumulator += dt
 		event.process_queue(L)
+		event.clean_queue(L)
 		for accumulator >= FIXED_TIMESTEP {
 			lua_fixed_update(lua.Number(FIXED_TIMESTEP))
 			accumulator -= FIXED_TIMESTEP
