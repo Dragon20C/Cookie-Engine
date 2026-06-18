@@ -1,5 +1,6 @@
 package core
 
+import audio "../audio_api"
 import conf "../config"
 import cookie "../cookie_api"
 import event "../event_api"
@@ -80,8 +81,9 @@ initalize_lua :: proc(path: string) -> bool {
 	gfx.load(L)
 	input.load(L)
 	event.load(L)
+	audio.load(L, path)
 	// UNIMPLEMENTED
-	// audio.load(L)
+
 	// input.load(L)
 
 	err := lua.L_dofile(L, strings.clone_to_cstring(file_path))

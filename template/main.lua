@@ -13,14 +13,12 @@ local timer = 0.0
 local reset_number = 0.25
 
 --- Events should be defined globally and not use the same values
-local events = { hello = 0, reset = 1 }
+local events = { set_pos = 0 }
 
 function _init()
 	print("Width", cookie.Width, "Height", cookie.Height)
+	event.connect(events.set_pos, Set_box_position)
 	--- Recommend connecting events at init time to make sure functions are already.
-	event.connect(events.hello, Print_hello)
-	event.connect(events.reset, Reset_box_position)
-	event.connect(events.reset, Do_something_else)
 end
 
 function _update(dt)
@@ -33,10 +31,13 @@ function _update(dt)
 end
 
 function _fixed_update(dt)
+	local x, y = input.mouse_position()
 	if input.pressed(input.SPACE) then
+		event.call(events.set_pos, x - size / 2, y - size / 2)
 		--- Currently, params are not supported, yet...
-		event.call(events.reset)
-		event.disconnect(events.reset, Do_something_else)
+		-- event.call(events.reset)
+		-- event.disconnect(events.reset, Do_something_else)
+		-- sfx.play("PickupCoin")
 	end
 
 
@@ -66,12 +67,8 @@ function Print_hello()
 	print("Hello")
 end
 
-function Reset_box_position()
-	print("Calling!")
-	red_box.x = cookie.Width / 2 - size / 2
-	red_box.y = cookie.Height / 2 - size / 2
-end
-
-function Do_something_else()
-	print("Doing something else")
+function Set_box_position(x, y)
+	print("Setting box position to x = ", x, "y = ", y)
+	red_box.x = x
+	red_box.y = y
 end

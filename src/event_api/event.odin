@@ -3,7 +3,16 @@ package event
 import h "../helper"
 import runtime "base:runtime"
 import "core:fmt"
+import "core:strings"
+
 import lua "vendor:lua/5.4"
+
+Event_Arg :: union {
+	i64,
+	f64,
+	bool,
+	string,
+}
 
 Event :: struct {
 	callback: i32, // Lua ref (luaL_ref)
@@ -14,10 +23,15 @@ Listeners :: map[int][dynamic]Event
 // better name for this...
 listeners: Listeners
 
-queue: [dynamic]int
+Queue_Data :: struct {
+	event_id: int,
+	args:     [dynamic]Event_Arg,
+}
+
+queue: [dynamic]Queue_Data
 
 load :: proc(L: ^lua.State) {
-	listeners: Listeners = make(Listeners)
+	listeners = make(Listeners)
 	//queue = make([dynamic]int)
 
 	lua.newtable(L)
@@ -113,10 +127,38 @@ call :: proc "c" (L: ^lua.State) -> i32 {
 		return 0
 	}
 	context = runtime.default_context()
-	append_elem(&queue, event_id)
-	// I should process params here but for now leave as is.
-	return 0
+	q_data := Queue_Data {
+		event_id = event_id,
+		args     = make([dynamic]Event_Arg),
+	}
 
+	create_args(L, &q_data)
+	append_elem(&queue, q_data)
+	for arg in q_data.args {
+		fmt.println("after append", arg)
+	}
+	return 0
+}
+
+create_args :: proc "c" (L: ^lua.State, q_data: ^Queue_Data) {
+	context = runtime.default_context()
+	for i: i32 = 2; i <= lua.gettop(L); i += 1 {
+		result: Event_Arg
+
+		if lua.isinteger(L, i) {
+			result = i64(lua.tointeger(L, i))
+		} else if lua.isnumber(L, i) {
+			result = f64(lua.tonumber(L, i))
+		} else if lua.isstring(L, i) {
+			result = strings.clone_from_cstring(lua.tostring(L, i))
+		} else if lua.isboolean(L, i) {
+			result = bool(lua.toboolean(L, i))
+		} else {
+			result = nil
+		}
+		fmt.println("RESULT:", result)
+		append_elem(&q_data.args, result)
+	}
 }
 
 process_queue :: proc "c" (L: ^lua.State) -> i32 {
@@ -127,16 +169,32 @@ process_queue :: proc "c" (L: ^lua.State) -> i32 {
 	// swap queue so new emits go into a fresh buffer
 	current := queue
 	context = runtime.default_context()
-	queue = make([dynamic]int)
+	queue = make([dynamic]Queue_Data)
 
 	for val in current {
-		listener := listeners[val]
+		listener := listeners[val.event_id]
+		args := val.args
+		size := i32(len(args))
+		fmt.println("EVENT:", val.event_id, "ARGS:", args)
 		for event in listener {
 			lua.rawgeti(L, lua.REGISTRYINDEX, lua.Integer(event.callback))
-			lua.call(L, 0, 0)
+			for arg in args {
+				switch v in arg {
+				case i64:
+					lua.pushinteger(L, lua.Integer(v))
+				case f64:
+					lua.pushnumber(L, lua.Number(v))
+				case bool:
+					lua.pushboolean(L, b32(v))
+				case string:
+					lua.pushstring(L, strings.clone_to_cstring(v))
+				case:
+					lua.pushnil(L)
+				}
+			}
+			lua.call(L, size, 0)
 		}
 	}
-
 	// for val in current {
 	// 	fmt.println("EVENT:", val)
 	// 	listener := listeners[val]
@@ -146,7 +204,6 @@ process_queue :: proc "c" (L: ^lua.State) -> i32 {
 	// 		fmt.println("CALLBACK REF:", event.callback)
 	// 	}
 	// }
-
 	return 0
 }
 
