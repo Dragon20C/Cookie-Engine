@@ -12,12 +12,13 @@ import rl "vendor:raylib"
 audio_files: map[string]rl.Sound
 
 load :: proc(L: ^lua.State, game_dir: string) -> bool {
+	rl.InitAudioDevice()
 	// create a place to store audio file paths
 	// Also this is a bad idea as this stops the library from loading lol.
 	if !search_audio_files(game_dir) {
 		return false
 	}
-	audio_files = make(map[string]rl.Sound)
+	// audio_files = make(map[string]rl.Sound)
 	lua.newtable(L)
 
 	h.register_function(L, "play", sfx_play)
@@ -53,20 +54,18 @@ search_audio_files :: proc(game_dir: string) -> b32 {
 			continue
 		}
 
-		sfx_title := file.name
-		fmt.println("Audio title :", sfx_title)
+		sfx_title := strings.split(file.name, ".")[0]
 
 		audio_files[sfx_title] = rl.LoadSound(strings.clone_to_cstring(ad_f))
 	}
-	// This PROC IS NOT DOING ITS JOB.
 
 	return true
 }
 
 sfx_play :: proc "c" (L: ^lua.State) -> i32 {
 	context = runtime.default_context()
-	ty := lua.type(L, 1)
-	fmt.println("ARG TYPE:", ty)
+	// ty := lua.type(L, 1)
+	// fmt.println("ARG TYPE:", ty)
 	if !lua.isstring(L, 1) {
 		lua.L_error(L, "Sfx audio title is not a string.")
 		return 0
@@ -77,9 +76,9 @@ sfx_play :: proc "c" (L: ^lua.State) -> i32 {
 	sfx_title := string(lua_sfx_title)
 	has_sfx := false
 
-	fmt.println("searching for sfx:", sfx_title)
+	// fmt.println("searching for sfx:", sfx_title)
+	// fmt.println("Size:", len(audio_files))
 	for key, value in audio_files {
-		fmt.println(key)
 		if key == sfx_title {
 			has_sfx = true
 			break
@@ -87,7 +86,8 @@ sfx_play :: proc "c" (L: ^lua.State) -> i32 {
 	}
 
 	if !has_sfx {
-		lua.L_error(L, "Sfx title not found")
+		fmt.println("Sfx title not found:", sfx_title)
+		//lua.L_error(L, "Sfx title not found")
 		return 0
 	}
 
@@ -107,4 +107,11 @@ music_play :: proc "c" (L: ^lua.State) -> i32 {
 
 
 	return 0
+}
+
+clear_audio :: proc() {
+	for key, value in audio_files {
+		rl.UnloadSound(value)
+	}
+	audio_files = make(map[string]rl.Sound)
 }

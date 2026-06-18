@@ -104,7 +104,6 @@ disconnect :: proc "c" (L: ^lua.State) -> i32 {
 
 		if lua.rawequal(L, 2, -1) {
 			listeners[event_id][index].alive = false
-			//unordered_remove_dynamic_array(&listeners[event_id], index)
 			return 0
 		}
 
@@ -134,9 +133,9 @@ call :: proc "c" (L: ^lua.State) -> i32 {
 
 	create_args(L, &q_data)
 	append_elem(&queue, q_data)
-	for arg in q_data.args {
-		fmt.println("after append", arg)
-	}
+	// for arg in q_data.args {
+	// 	fmt.println("after append", arg)
+	// }
 	return 0
 }
 
@@ -156,7 +155,7 @@ create_args :: proc "c" (L: ^lua.State, q_data: ^Queue_Data) {
 		} else {
 			result = nil
 		}
-		fmt.println("RESULT:", result)
+		// fmt.println("RESULT:", result)
 		append_elem(&q_data.args, result)
 	}
 }
@@ -175,7 +174,7 @@ process_queue :: proc "c" (L: ^lua.State) -> i32 {
 		listener := listeners[val.event_id]
 		args := val.args
 		size := i32(len(args))
-		fmt.println("EVENT:", val.event_id, "ARGS:", args)
+		// fmt.println("EVENT:", val.event_id, "ARGS:", args)
 		for event in listener {
 			lua.rawgeti(L, lua.REGISTRYINDEX, lua.Integer(event.callback))
 			for arg in args {

@@ -106,6 +106,7 @@ handle_loop :: proc() {
 
 	defer lua.close(L)
 	defer rl.CloseWindow()
+	defer audio.clear_audio()
 
 	rl.SetTargetFPS(60)
 

@@ -30,6 +30,8 @@ function _update(dt)
 	-- end
 end
 
+local counter = 0
+
 function _fixed_update(dt)
 	local x, y = input.mouse_position()
 	if input.pressed(input.SPACE) then
@@ -37,7 +39,14 @@ function _fixed_update(dt)
 		--- Currently, params are not supported, yet...
 		-- event.call(events.reset)
 		-- event.disconnect(events.reset, Do_something_else)
-		-- sfx.play("PickupCoin")
+		if counter == 0 then
+			sfx.play("jump")
+		elseif counter == 1 then
+			sfx.play("hitHurt")
+		elseif counter == 2 then
+			sfx.play("pickupCoin")
+		end
+		counter = (counter + 1) % 3
 	end
 
 
