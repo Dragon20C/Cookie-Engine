@@ -5,20 +5,22 @@ import "core:strings"
 import lua "vendor:lua/5.4"
 
 Config :: struct {
-	title:   string,
-	game_id: string,
-	width:   int,
-	height:  int,
-	scale:   f32,
+	title:     string,
+	game_id:   string,
+	width:     int,
+	height:    int,
+	cell_size: int,
+	scale:     f32,
 }
 
 
 default_config: Config = {
-	title   = "Cookie Engine",
-	game_id = "Cookie.Game",
-	width   = 640,
-	height  = 360,
-	scale   = 1.0,
+	title     = "Cookie Engine",
+	game_id   = "Cookie.Game",
+	width     = 640,
+	height    = 360,
+	cell_size = 16,
+	scale     = 1.0,
 }
 
 current_config: Config = default_config

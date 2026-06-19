@@ -74,20 +74,8 @@ sfx_play :: proc "c" (L: ^lua.State) -> i32 {
 	lua_sfx_title := lua.tostring(L, 1)
 
 	sfx_title := string(lua_sfx_title)
-	has_sfx := false
-
-	// fmt.println("searching for sfx:", sfx_title)
-	// fmt.println("Size:", len(audio_files))
-	for key, value in audio_files {
-		if key == sfx_title {
-			has_sfx = true
-			break
-		}
-	}
-
-	if !has_sfx {
-		fmt.println("Sfx title not found:", sfx_title)
-		//lua.L_error(L, "Sfx title not found")
+	if !has_audio(sfx_title) {
+		fmt.println("Audio title not found:", sfx_title)
 		return 0
 	}
 
@@ -95,6 +83,51 @@ sfx_play :: proc "c" (L: ^lua.State) -> i32 {
 	rl.PlaySound(source)
 
 	return 0
+}
+
+// Honestly this is a bit of a hack of an audio system
+// Future improvements will include a proper audio mixer
+sfx_play_adv :: proc "c" (L: ^lua.State) -> i32 {
+	// sound, volume, pitch, pan
+	context = runtime.default_context()
+	if !lua.isstring(L, 1) {
+		lua.L_error(L, "Sfx audio title is not a string.")
+		return 0
+	}
+
+	title := string(lua.tostring(L, 1))
+	if !has_audio(title) {
+		fmt.println("Audio title not found:", title)
+		return 0
+	}
+
+	if !lua.isnumber(L, 2) {
+		lua.L_error(L, "Volume is not a number.")
+		return 0
+	}
+	volume := lua.tonumber(L, 2)
+
+	if !lua.isnumber(L, 3) {
+		lua.L_error(L, "Pitch is not a number.")
+		return 0
+	}
+	pitch := lua.tonumber(L, 3)
+
+	if !lua.isnumber(L, 4) {
+		lua.L_error(L, "Pan is not a number.")
+		return 0
+	}
+	pan := lua.tonumber(L, 4)
+
+	source := audio_files[string(title)]
+	rl.SetSoundPan(source, f32(pan))
+	rl.SetSoundVolume(source, f32(volume))
+	rl.SetSoundPitch(source, f32(pitch))
+	if !rl.IsAudioStreamPlaying(source) {
+		rl.PlaySound(source)
+	}
+	return 0
+
 }
 
 music_play :: proc "c" (L: ^lua.State) -> i32 {
@@ -114,4 +147,13 @@ clear_audio :: proc() {
 		rl.UnloadSound(value)
 	}
 	audio_files = make(map[string]rl.Sound)
+}
+
+has_audio :: proc(title: string) -> bool {
+	for key, _ in audio_files {
+		if key == title {
+			return true
+		}
+	}
+	return false
 }

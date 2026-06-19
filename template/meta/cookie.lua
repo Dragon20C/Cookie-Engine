@@ -10,11 +10,12 @@ cookie = {}
 
 ---config is read once at the begining of game load before init.
 ---@class Cookie.Config
----@field title		string
----@field id		string
----@field width?	number
----@field height?	number
----@field scale?	number
+---@field title			string
+---@field id			string
+---@field width?		number
+---@field height?		number
+---@field cell_size? 	number
+---@field scale?		number
 
 ---config is read once at the begining of game load before init.
 --- @return Cookie.Config?

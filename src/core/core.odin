@@ -103,7 +103,7 @@ handle_loop :: proc() {
 
 	rl.SetConfigFlags(rl.ConfigFlags{.WINDOW_RESIZABLE})
 	rl.InitWindow(i32(config.width), i32(config.height), strings.clone_to_cstring(config.title))
-
+	gfx.load_sprites(game_dir)
 	defer lua.close(L)
 	defer rl.CloseWindow()
 	defer audio.clear_audio()

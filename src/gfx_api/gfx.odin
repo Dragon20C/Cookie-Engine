@@ -2,15 +2,22 @@ package gfx
 
 import h "../helper"
 import palette "../palette"
+import "base:runtime"
+import "core:fmt"
+import "core:os"
+import "core:path/filepath"
+import "core:strings"
+
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
+sprites: rl.Texture2D
 
 load :: proc(L: ^lua.State) {
 	lua.newtable(L)
 	register_color_palette(L)
 	h.register_function(L, "clear", clear)
-	// h.register_function(L, "sprite", sprite)
+	h.register_function(L, "sprite", sprite)
 	h.register_function(L, "text", text)
 	h.register_function(L, "rect", rect)
 	h.register_function(L, "rect_fill", rect_fill)
@@ -58,6 +65,36 @@ clear :: proc "c" (L: ^lua.State) -> i32 {
 	}
 
 	rl.ClearBackground(palette.color_palette[color])
+	return 0
+}
+
+sprite :: proc "c" (L: ^lua.State) -> i32 {
+	context = runtime.default_context()
+	if !lua.isinteger(L, 1) {
+		fmt.println("Sprite id was not an integer")
+		return 0
+	}
+
+	id := cast(i32)lua.tointeger(L, 1)
+
+	if !lua.isnumber(L, 2) || !lua.isnumber(L, 3) {
+		fmt.println("Sprite position was not an integer")
+		return 0
+	}
+
+	x := cast(f32)lua.tonumber(L, 2)
+	y := cast(f32)lua.tonumber(L, 3)
+
+	// I shouldnt be hard coding it here, but im lazy and the whole system is a mess lol
+	cell_size: f32 = 16
+
+	cols := f32(sprites.width) / cell_size
+	rows := f32(sprites.height) / cell_size
+	// fmt.println("cols:", cols, "rows:", rows)
+	sprite_x := i32(id) % i32(cols)
+	sprite_y := f32(id) / cols
+	rect := rl.Rectangle{cast(f32)sprite_x, sprite_y, cell_size, cell_size}
+	rl.DrawTextureRec(sprites, rect, rl.Vector2{x, y}, rl.WHITE)
 	return 0
 }
 
@@ -176,4 +213,20 @@ circle_fill :: proc "c" (L: ^lua.State) -> i32 {
 
 	rl.DrawCircleLines(x, y, radius, palette.color_palette[color])
 	return 0
+}
+
+load_sprites :: proc(path: string) {
+	sprites_path, err := filepath.join({path, "sprites.png"})
+
+	if err != nil {
+		fmt.println("Failed to join sprites path: %s", err)
+		return
+	}
+
+	if os.is_file(sprites_path) {
+		sprites = rl.LoadTexture(strings.clone_to_cstring(sprites_path))
+	} else {
+		fmt.println("Failed to load sprites: %s", sprites_path)
+		return
+	}
 }

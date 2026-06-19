@@ -1,6 +1,6 @@
 --- main.lua file
 
-local size = 64
+local size = 16
 local red_box = {
 	x = cookie.Width / 2 - size / 2,
 	y = cookie.Height / 2 - size / 2,
@@ -65,6 +65,7 @@ end
 function _draw(dt)
 	gfx.clear(gfx.COLOR_CARDBOARD)
 	gfx.rect(red_box.x, red_box.y, size, size, gfx.COLOR_RED)
+	gfx.sprite(0, red_box.x, red_box.y)
 	-- gfx.rect(100, 100, 100, 100, gfx.COLOR_WHITE)
 	-- gfx.rect_fill(200, 100, 100, 100, gfx.COLOR_LEAF)
 	-- gfx.text("Hello, World!", 100, 80, 24, gfx.COLOR_BLACK)

@@ -16,7 +16,11 @@ main :: proc() {
 	args := os.args
 	// check if a command is provided
 	if len(args) < 2 {
-		fmt.println("No command provided")
+		fmt.println("Cookie has these commands:")
+		fmt.println("  new <project_name> [path]")
+		fmt.println("  run [project_name]")
+		fmt.println("  dev [project_name]")
+		fmt.println("  export <project_name>")
 		return
 	}
 
