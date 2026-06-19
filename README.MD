@@ -42,7 +42,7 @@ Running just cookie prints the available commands.
 - `./cookie dev ./desired/game/path`
 **Note :** Similar to run except it runs the game in dev mode, dev mode is a simple tool for debugging your games
 usage is simply doing cookie.IS_DEV in your lua files, this becomes true if cookie is using dev mode.
--`./cookie export ./desired/game/path`
+- `./cookie export ./desired/game/path`
 **Note :** This currently does nothing, so there is no current way to export the project to any systems.
 
 
