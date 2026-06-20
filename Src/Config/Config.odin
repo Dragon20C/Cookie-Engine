@@ -17,3 +17,8 @@ make_config :: proc() -> Config {
 		height = 480,
 	}
 }
+
+read_config :: proc() -> (conf: Config, ok: bool, err: string) {
+	// Temporary, for testing errors.
+	return make_config(), false, "Failed to read config."
+}

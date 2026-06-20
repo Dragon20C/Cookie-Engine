@@ -7,6 +7,18 @@ import bindings "../Scripting/Bindings"
 import utils "../Utils"
 import "core:fmt"
 
+ErrorType :: enum {
+	None,
+	Fatal,
+	Runtime,
+	Warning,
+}
+
+EngineError :: struct {
+	kind:    ErrorType,
+	message: string,
+}
+
 Engine :: struct {
 	Conf:    cfg.Config,
 	RunTime: rt.RunTime,
@@ -21,6 +33,17 @@ run :: proc(dir: string, is_dev: bool) {
 	init_engine()
 
 	// Load configuration
+	conf, ok, err := cfg.read_config()
+	if !ok {
+		engine_err := EngineError {
+			kind    = ErrorType.Fatal,
+			message = err,
+		}
+		report_error(engine_err)
+		return
+	}
+	engine.Conf = conf
+
 	// Initalise lua
 	// Load bindings
 	// bindings.register_all_bindings()
@@ -39,5 +62,17 @@ make_engine :: proc() -> Engine {
 		RunTime = rt.make_runtime(),
 		Lua = lua.make_lua_vm(),
 		Utils = utils.make_utils(),
+	}
+}
+
+report_error :: proc(err: EngineError) {
+	switch err.kind {
+	case .Fatal:
+		fmt.println("FATAL:", err.message)
+	case .Runtime:
+		fmt.println("ERROR:", err.message)
+	case .Warning:
+		fmt.println("WARN:", err.message)
+	case .None:
 	}
 }
