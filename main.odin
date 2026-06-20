@@ -4,10 +4,10 @@ package cli
 // the "dev" command starts cookie engine in development mode
 // the "export" command exports the game
 
+import c_core "Src/Core"
 import "core:fmt"
 import "core:os"
 import "core:path/filepath"
-import c_core "src/core"
 
 template_dir: string = "template"
 
@@ -118,25 +118,35 @@ is_project_name_valid :: proc(project_name: string) -> bool {
 }
 
 run_project :: proc(args: []string, dev: bool) {
-	project_path := args[2]
 
-	if !os.is_dir(project_path) {
-		fmt.println("Project path is not a directory:", project_path)
+
+	dir: string = "."
+	if len(args) > 2 {
+		dir = args[2]
+	}
+	if !os.is_dir(dir) {
+		fmt.println("Project path is not a directory:", dir)
 		return
 	}
 
-	has_lua_main, err := filepath.join({project_path, "main.lua"})
+
+	if !os.is_dir(dir) {
+		fmt.println("Project path is not a directory:", dir)
+		return
+	}
+
+	has_lua_main, err := filepath.join({dir, "main.lua"})
 	if err != nil {
 		fmt.println("Error joining path:", err)
 		return
 	}
 
 	if !os.is_file(has_lua_main) {
-		fmt.println("No main.lua found in project path:", project_path)
+		fmt.println("No main.lua found in project path:", dir)
 		return
 	}
 
-	c_core.run(project_path, dev)
+	c_core.run(dir, dev)
 }
 
 export_project :: proc(args: []string) {
