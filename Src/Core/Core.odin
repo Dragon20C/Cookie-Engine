@@ -33,7 +33,7 @@ run :: proc(dir: string, is_dev: bool) {
 	init_engine()
 
 	// Load configuration
-	conf, ok, err := cfg.read_config()
+	conf, ok, err := cfg.read_config(dir, is_dev)
 	if !ok {
 		engine_err := EngineError {
 			kind    = ErrorType.Fatal,
@@ -43,6 +43,8 @@ run :: proc(dir: string, is_dev: bool) {
 		return
 	}
 	engine.Conf = conf
+
+	fmt.println(conf)
 
 	// Initalise lua
 	// Load bindings

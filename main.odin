@@ -9,7 +9,7 @@ import "core:fmt"
 import "core:os"
 import "core:path/filepath"
 
-template_dir: string = "template"
+template_dir: string = "Src/Template"
 
 main :: proc() {
 	// store the command line arguments
@@ -96,6 +96,7 @@ create_project :: proc(args: []string) {
 	cpy_err := os.copy_directory_all(project_path, template_dir)
 	if cpy_err != nil {
 		fmt.println("Error creating project directory:", cpy_err)
+		fmt.println("Selected path:", project_path)
 		return
 	}
 
