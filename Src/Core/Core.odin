@@ -7,6 +7,8 @@ import bindings "../Scripting/Bindings"
 import utils "../Utils"
 import "core:fmt"
 import "core:path/filepath"
+import "core:strings"
+
 
 ErrorType :: enum {
 	None,
@@ -68,8 +70,12 @@ run :: proc(dir: string, is_dev: bool) {
 		return
 	}
 	// Run main.lua
-	// Start the runtime
-	fmt.println("Cookie Engine")
+	rt.game_loop(
+		engine.Lua.L,
+		strings.clone_to_cstring(engine.Conf.title),
+		engine.Conf.width,
+		engine.Conf.height,
+	)
 }
 
 init_engine :: proc() {
