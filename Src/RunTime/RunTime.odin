@@ -1,9 +1,8 @@
 package RunTime
 
-RunTime :: struct {
-	is_running: bool,
-}
 
-make_runtime :: proc() -> RunTime {
-	return RunTime{is_running = false}
+import lua "vendor:lua/5.4"
+
+game_loop :: proc(L: ^lua.State) {
+
 }

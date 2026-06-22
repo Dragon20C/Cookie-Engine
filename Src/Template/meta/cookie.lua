@@ -1,9 +1,20 @@
 ---@meta
 
+---@class Cookie
+---@field Width integer
+---@field Height integer
+---@field IsDev boolean IsDev Turns true when running the project with the debug flag "dev".
+---@field Elasped number
 
+---@class Cookie.Config
+---@field title string
+---@field id string
+---@field width? integer
+---@field height? integer
 
+Cookie = {}
 
---- @return table Expects configuration to be returned.
+--- @return Cookie.Config Expects configuration to be returned.
 function _config() end
 
 --- The initialization step of the program.

@@ -6,6 +6,7 @@ import lua "../Scripting"
 import bindings "../Scripting/Bindings"
 import utils "../Utils"
 import "core:fmt"
+import "core:path/filepath"
 
 ErrorType :: enum {
 	None,
@@ -20,10 +21,9 @@ EngineError :: struct {
 }
 
 Engine :: struct {
-	Conf:    cfg.Config,
-	RunTime: rt.RunTime,
-	Lua:     lua.LuaVM,
-	Utils:   utils.Utils,
+	Conf:  cfg.Config,
+	Lua:   lua.LuaVM,
+	Utils: utils.Utils,
 }
 
 engine: Engine
@@ -43,12 +43,30 @@ run :: proc(dir: string, is_dev: bool) {
 		return
 	}
 	engine.Conf = conf
-
-	fmt.println(conf)
-
-	// Initalise lua
+	// Cookie requires engine specific values.
+	bindings.set_cookie_defaults(engine.Conf.width, engine.Conf.height, b32(engine.Conf.is_dev))
 	// Load bindings
-	// bindings.register_all_bindings()
+	bindings.register_all_bindings(engine.Lua.L)
+
+	main_lua, join_err := filepath.join({dir, "main.lua"})
+	if join_err != nil {
+		engine_err := EngineError {
+			kind    = ErrorType.Fatal,
+			message = "Failed to join paths together.",
+		}
+		report_error(engine_err)
+		return
+	}
+
+	l_ok, l_err := lua.read_lua_file(engine.Lua.L, main_lua)
+	if !l_ok {
+		engine_err := EngineError {
+			kind    = ErrorType.Fatal,
+			message = l_err,
+		}
+		report_error(engine_err)
+		return
+	}
 	// Run main.lua
 	// Start the runtime
 	fmt.println("Cookie Engine")
@@ -59,12 +77,7 @@ init_engine :: proc() {
 }
 
 make_engine :: proc() -> Engine {
-	return Engine {
-		Conf = cfg.make_config(),
-		RunTime = rt.make_runtime(),
-		Lua = lua.make_lua_vm(),
-		Utils = utils.make_utils(),
-	}
+	return Engine{Conf = cfg.make_config(), Lua = lua.make_lua_vm(), Utils = utils.make_utils()}
 }
 
 report_error :: proc(err: EngineError) {
