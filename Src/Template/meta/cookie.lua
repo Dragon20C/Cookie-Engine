@@ -24,6 +24,10 @@ function _init() end
 ---@param dt number Delta time is the time interval between the current frame and the previous frame.
 function _update(dt) end
 
+--- Fixed update is called at a fixed delta time.
+---@param dt number Delta time is the time interval between the current frame and the previous frame.
+function _fixed_update(dt) end
+
 --- Draw is called each frame specifically for drawing onto the screen.
 ---@param dt number Delta time is the time interval between the current frame and the previous frame.
 function _draw(dt)

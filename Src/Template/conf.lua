@@ -1,4 +1,5 @@
 function _config()
+	---@type Cookie.Config
 	return {
 		title = "Game Title",
 		id = "UserName.GameTitle",

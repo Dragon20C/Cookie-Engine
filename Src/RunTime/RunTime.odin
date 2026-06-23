@@ -6,51 +6,41 @@ import rl "vendor:raylib"
 
 game_loop :: proc(L: ^lua.State, title: cstring, width: i32, height: i32) {
 
+	start_raylib_window(width, height, title)
 
-	rl.SetConfigFlags({rl.ConfigFlag.WINDOW_RESIZABLE, rl.ConfigFlag.VSYNC_HINT})
-	rl.InitWindow(width, height, title)
-	rl.SetWindowMinSize(320, 240)
+	target := create_render_texture(width, height)
 
-	target := rl.LoadRenderTexture(width, height)
-	rl.SetTextureFilter(target.texture, rl.TextureFilter.POINT)
+	loop(L, target, width, height)
+}
 
+loop :: proc(L: ^lua.State, texture: rl.RenderTexture2D, width: i32, height: i32) {
+	defer shutdown_engine(L, texture)
 
-	rl.SetTargetFPS(60)
-	defer lua.close(L)
-	defer rl.CloseWindow()
+	lua_init(L)
+
+	FIXED_TIMESTEP: f32 = 1.0 / 60.0
+	accumulator: f32 = 0.0
 
 	for !rl.WindowShouldClose() {
 		dt := rl.GetFrameTime()
 		lua_dt := lua.Number(dt)
 
-		scale: f32 = min(
-			f32(rl.GetScreenWidth()) / f32(width),
-			f32(rl.GetScreenHeight()) / f32(height),
-		)
 
-		mouse_pos := rl.GetMousePosition()
-		virtual_mouse := rl.Vector2{}
-		offset_x := (f32(rl.GetScreenWidth()) - (f32(width) * scale)) * 0.5
-		offset_y := (f32(rl.GetScreenHeight()) - (f32(height) * scale)) * 0.5
+		accumulator += dt
 
-		virtual_mouse.x = (mouse_pos.x - offset_x) / scale
-		virtual_mouse.y = (mouse_pos.y - offset_y) / scale
+		window_scale := calculate_scale(width, height)
+		virtual_mouse := calculate_virtual_mouse(width, height, window_scale)
 
-		virtual_mouse = rl.Vector2Clamp(
-			virtual_mouse,
-			rl.Vector2{0, 0},
-			rl.Vector2{f32(width), f32(height)},
-		)
+		for accumulator >= FIXED_TIMESTEP {
+			lua_fixed_update(L, lua.Number(FIXED_TIMESTEP))
+			accumulator -= FIXED_TIMESTEP
+		}
 
-		rl.BeginTextureMode(target)
+		lua_update(L, lua_dt)
+
+		rl.BeginTextureMode(texture)
+		// Temporary drawing onto the screen until the API is more refined.
 		rl.ClearBackground(rl.BLUE)
-		rl.DrawText(
-			rl.TextFormat("Default Mouse: X : %i,Y : %i", int(mouse_pos.x), int(mouse_pos.y)),
-			300,
-			25,
-			20,
-			rl.GREEN,
-		)
 		rl.DrawText(
 			rl.TextFormat(
 				"Virtual Mouse: X : %i,Y : %i",
@@ -62,28 +52,76 @@ game_loop :: proc(L: ^lua.State, title: cstring, width: i32, height: i32) {
 			20,
 			rl.YELLOW,
 		)
+		lua_draw(L, lua_dt)
 		rl.EndTextureMode()
 
-		rl.BeginDrawing()
-		rl.ClearBackground(rl.BLACK)
-
-		rl.DrawTexturePro(
-			target.texture,
-			rl.Rectangle{0, 0, f32(target.texture.width), -f32(target.texture.height)},
-			rl.Rectangle {
-				(f32(rl.GetScreenWidth()) - (f32(width) * scale)) * 0.5,
-				(f32(rl.GetScreenHeight()) - (f32(height) * scale)) * 0.5,
-				f32(width) * scale,
-				f32(height) * scale,
-			},
-			rl.Vector2{0, 0},
-			0,
-			rl.WHITE,
-		)
-		rl.EndDrawing()
+		render_texture(texture, window_scale)
 	}
 }
 
+calculate_scale :: proc(width: i32, height: i32) -> f32 {
+	return min(f32(rl.GetScreenWidth()) / f32(width), f32(rl.GetScreenHeight()) / f32(height))
+}
+
+calculate_virtual_mouse :: proc(width: i32, height: i32, scale: f32) -> rl.Vector2 {
+	mouse_pos := rl.GetMousePosition()
+
+	virtual_mouse := rl.Vector2{0, 0}
+
+	offset_x := (f32(rl.GetScreenWidth()) - (f32(width) * scale)) * 0.5
+	offset_y := (f32(rl.GetScreenHeight()) - (f32(height) * scale)) * 0.5
+
+	virtual_mouse.x = (mouse_pos.x - offset_x) / scale
+	virtual_mouse.y = (mouse_pos.y - offset_y) / scale
+
+	return rl.Vector2Clamp(virtual_mouse, rl.Vector2{0, 0}, rl.Vector2{f32(width), f32(height)})
+
+}
+
+create_render_texture :: proc(width: i32, height: i32) -> rl.RenderTexture2D {
+	target := rl.LoadRenderTexture(width, height)
+	rl.SetTextureFilter(target.texture, rl.TextureFilter.POINT)
+	return target
+}
+
+render_texture :: proc(texture: rl.RenderTexture2D, scale: f32) {
+
+	tex_width := f32(texture.texture.width)
+	tex_height := f32(texture.texture.height)
+	render_width := f32(rl.GetScreenWidth())
+	render_height := f32(rl.GetScreenHeight())
+
+	rl.BeginDrawing()
+	rl.ClearBackground(rl.BLACK)
+
+	rl.DrawTexturePro(
+		texture.texture,
+		rl.Rectangle{0, 0, tex_width, -tex_height},
+		rl.Rectangle {
+			(render_width - (tex_width * scale)) * 0.5,
+			(render_height - (tex_height * scale)) * 0.5,
+			tex_width * scale,
+			tex_height * scale,
+		},
+		rl.Vector2{0, 0},
+		0,
+		rl.WHITE,
+	)
+	rl.EndDrawing()
+}
+
+start_raylib_window :: proc(width: i32, height: i32, title: cstring) {
+	rl.SetConfigFlags({rl.ConfigFlag.WINDOW_RESIZABLE, rl.ConfigFlag.VSYNC_HINT})
+	rl.InitWindow(width, height, title)
+	rl.SetWindowMinSize(244, 144)
+	rl.SetTargetFPS(60)
+}
+
+shutdown_engine :: proc(L: ^lua.State, texture: rl.RenderTexture2D) {
+	lua.close(L)
+	rl.UnloadRenderTexture(texture)
+	rl.CloseWindow()
+}
 
 lua_init :: proc(L: ^lua.State) {
 	lua.getglobal(L, "_init")

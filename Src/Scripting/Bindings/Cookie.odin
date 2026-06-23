@@ -9,17 +9,17 @@ elapsed: f32 = 0.0
 
 register_cookie :: proc(L: ^lua.State) {
 	lua.newtable(L)
+
 	lua.pushinteger(L, lua.Integer(width))
-	lua.setfield(L, -2, "width")
+	lua.setfield(L, -2, "Width")
 	lua.pushinteger(L, lua.Integer(height))
-	lua.setfield(L, -2, "height")
+	lua.setfield(L, -2, "Height")
 	lua.pushboolean(L, is_dev)
-	lua.setfield(L, -2, "is_dev")
+	lua.setfield(L, -2, "IsDev")
 	lua.pushnumber(L, lua.Number(elapsed))
-	lua.setfield(L, -2, "elapsed")
+	lua.setfield(L, -2, "Elapsed")
 
-
-	lua.setfield(L, -1, "Cookie")
+	lua.setglobal(L, "Cookie")
 }
 
 set_cookie_defaults :: proc(_width: i32, _height: i32, _is_dev: b32) {
