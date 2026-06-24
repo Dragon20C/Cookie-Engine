@@ -40,20 +40,9 @@ loop :: proc(L: ^lua.State, texture: rl.RenderTexture2D, width: i32, height: i32
 		lua_update(L, lua_dt)
 
 		rl.BeginTextureMode(texture)
-		// Temporary drawing onto the screen until the API is more refined.
-		//rl.ClearBackground(rl.BLUE)
-		//rl.DrawText(
-		// 	rl.TextFormat(
-		// 		"Virtual Mouse: X : %i,Y : %i",
-		// 		int(virtual_mouse.x),
-		// 		int(virtual_mouse.y),
-		// 	),
-		// 	300,
-		// 	55,
-		// 	20,
-		// 	rl.YELLOW,
-		// )
+
 		lua_draw(L, lua_dt)
+
 		rl.EndTextureMode()
 
 		render_texture(texture, window_scale)
@@ -121,6 +110,7 @@ start_raylib_window :: proc(width: i32, height: i32, title: cstring) {
 shutdown_engine :: proc(L: ^lua.State, texture: rl.RenderTexture2D) {
 	lua.close(L)
 	rl.UnloadRenderTexture(texture)
+	bindings.unload_all_sprites()
 	rl.CloseWindow()
 }
 

@@ -82,6 +82,25 @@ function gfx.circle(filled, x, y, radius, color) end
 ---@param color integer
 function gfx.line(x1, y1, x2, y2, color) end
 
+--- Loads a sprite from a given path.
+--- @param path string
+--- @return integer
+function gfx.load_sprite(path) end
+
+--- Unloads a sprite from memory.
+--- @param id integer
+function gfx.unload_sprite(id) end
+
+--- Draws a sprite on the screen.
+--- @param id integer
+--- @param src_x number
+--- @param src_y number
+--- @param width number
+--- @param height number
+--- @param dest_x number
+--- @param dest_y number
+function gfx.draw_sprite(id, src_x, src_y, width, height, dest_x, dest_y) end
+
 input              = {}
 
 input.ENTER        = 0

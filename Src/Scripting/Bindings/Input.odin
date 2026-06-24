@@ -9,10 +9,10 @@ key_index := [7]rl.KeyboardKey {
 	rl.KeyboardKey.ENTER,
 	rl.KeyboardKey.ESCAPE,
 	rl.KeyboardKey.SPACE,
-	rl.KeyboardKey.LEFT,
-	rl.KeyboardKey.RIGHT,
-	rl.KeyboardKey.UP,
-	rl.KeyboardKey.DOWN,
+	rl.KeyboardKey.A,
+	rl.KeyboardKey.D,
+	rl.KeyboardKey.W,
+	rl.KeyboardKey.S,
 }
 
 virtual_mouse_pos := rl.Vector2{0, 0}

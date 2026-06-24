@@ -3,8 +3,11 @@ package Bindings
 import "base:runtime"
 import "core:c"
 import "core:fmt"
+import "core:path/filepath"
+import "core:strings"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
+
 
 COLORS: [16]u32 = {
 	0x000000FF, // 0 black
@@ -44,6 +47,11 @@ COLORS_NAME: [16]cstring = {
 }
 thickness := f32(2)
 
+textures: map[u32]rl.Texture2D
+next_texture_id: u32 = 1
+
+game_path: string
+
 register_gfx :: proc(L: ^lua.State) {
 	lua.newtable(L)
 
@@ -55,6 +63,10 @@ register_gfx :: proc(L: ^lua.State) {
 	register_function(L, "rectangle", rectangle)
 	register_function(L, "line", line)
 	register_function(L, "circle", circle)
+
+	register_function(L, "load_sprite", load_sprite)
+	register_function(L, "draw_sprite", draw_sprite)
+	register_function(L, "unload_sprite", unload_sprite)
 
 	lua.setglobal(L, "gfx")
 }
@@ -165,4 +177,93 @@ line :: proc "c" (L: ^lua.State) -> i32 {
 	rl.DrawLineEx(start, end, thickness, raylib_color)
 
 	return 0
+}
+
+load_sprite :: proc "c" (L: ^lua.State) -> i32 {
+	if !lua.isstring(L, 1) {
+		return 0
+	}
+
+	path := lua.tostring(L, 1)
+	context = runtime.default_context()
+	sprite_path, err := filepath.join({game_path, strings.clone_from_cstring(path)})
+	if err != nil {
+		return 0
+	}
+	texture := rl.LoadTexture(strings.clone_to_cstring(sprite_path))
+	if texture.id == 0 {
+		return 0
+	}
+
+	textures[texture.id] = texture
+
+	lua.pushinteger(L, lua.Integer(texture.id))
+
+	return 1
+}
+
+unload_sprite :: proc "c" (L: ^lua.State) -> i32 {
+	if !lua.isinteger(L, 1) {
+		return 0
+	}
+
+	id := u32(lua.tointeger(L, 1))
+	context = runtime.default_context()
+	_, ok := textures[id]
+
+	if !ok {
+		return 0
+	}
+
+	texture := textures[id]
+	if texture.id == 0 {
+		return 0
+	}
+
+	rl.UnloadTexture(texture)
+
+	delete_key(&textures, id)
+
+	return 0
+}
+
+draw_sprite :: proc "c" (L: ^lua.State) -> i32 {
+	if !lua.isinteger(L, 1) ||
+	   !lua.isnumber(L, 2) ||
+	   !lua.isnumber(L, 3) ||
+	   !lua.isnumber(L, 4) ||
+	   !lua.isnumber(L, 5) ||
+	   !lua.isnumber(L, 6) ||
+	   !lua.isnumber(L, 7) {
+		return 0
+	}
+
+	id := u32(lua.tointeger(L, 1))
+	src_x := f32(lua.tonumber(L, 2))
+	src_y := f32(lua.tonumber(L, 3))
+	width := f32(lua.tonumber(L, 4))
+	height := f32(lua.tonumber(L, 5))
+	dst_x := f32(lua.tonumber(L, 6))
+	dst_y := f32(lua.tonumber(L, 7))
+
+	rl.DrawTexturePro(
+		textures[id],
+		rl.Rectangle{src_x, src_y, width, height},
+		rl.Rectangle{dst_x, dst_y, width, height},
+		0,
+		0,
+		rl.WHITE,
+	)
+	return 0
+}
+
+set_path :: proc "c" (game_dir: string) {
+	game_path = game_dir
+}
+
+unload_all_sprites :: proc "c" () {
+	for _, texture in textures {
+		rl.UnloadTexture(texture)
+	}
+	clear_map(&textures)
 }

@@ -27,7 +27,7 @@ Engine :: struct {
 }
 
 engine: Engine
-lua_utils: string = "../Utils"
+lua_utils: string = "../Utils/utils.lua"
 
 run :: proc(dir: string, is_dev: bool) {
 	// Initialise the engine
@@ -46,6 +46,7 @@ run :: proc(dir: string, is_dev: bool) {
 	engine.Conf = conf
 	// Cookie requires engine specific values.
 	bindings.set_cookie_defaults(engine.Conf.width, engine.Conf.height, b32(engine.Conf.is_dev))
+	bindings.set_path(dir)
 	// Load bindings
 	bindings.register_all_bindings(engine.Lua.L)
 
@@ -84,6 +85,7 @@ init_engine :: proc() {
 make_engine :: proc() -> Engine {
 	return Engine{Conf = cfg.make_config(), Lua = lua.make_lua_vm()}
 }
+
 
 report_error :: proc(err: EngineError) {
 	switch err.kind {
