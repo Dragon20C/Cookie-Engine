@@ -4,7 +4,6 @@ import cfg "../Config"
 import rt "../RunTime"
 import lua "../Scripting"
 import bindings "../Scripting/Bindings"
-import utils "../Utils"
 import "core:fmt"
 import "core:path/filepath"
 import "core:strings"
@@ -23,12 +22,12 @@ EngineError :: struct {
 }
 
 Engine :: struct {
-	Conf:  cfg.Config,
-	Lua:   lua.LuaVM,
-	Utils: utils.Utils,
+	Conf: cfg.Config,
+	Lua:  lua.LuaVM,
 }
 
 engine: Engine
+lua_utils: string = "../Utils"
 
 run :: proc(dir: string, is_dev: bool) {
 	// Initialise the engine
@@ -83,7 +82,7 @@ init_engine :: proc() {
 }
 
 make_engine :: proc() -> Engine {
-	return Engine{Conf = cfg.make_config(), Lua = lua.make_lua_vm(), Utils = utils.make_utils()}
+	return Engine{Conf = cfg.make_config(), Lua = lua.make_lua_vm()}
 }
 
 report_error :: proc(err: EngineError) {

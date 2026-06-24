@@ -1,6 +1,6 @@
 package RunTime
 
-
+import bindings "../Scripting/Bindings"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
@@ -24,7 +24,7 @@ loop :: proc(L: ^lua.State, texture: rl.RenderTexture2D, width: i32, height: i32
 	for !rl.WindowShouldClose() {
 		dt := rl.GetFrameTime()
 		lua_dt := lua.Number(dt)
-
+		bindings.update_elapsed(L, dt)
 
 		accumulator += dt
 
@@ -40,18 +40,18 @@ loop :: proc(L: ^lua.State, texture: rl.RenderTexture2D, width: i32, height: i32
 
 		rl.BeginTextureMode(texture)
 		// Temporary drawing onto the screen until the API is more refined.
-		rl.ClearBackground(rl.BLUE)
-		rl.DrawText(
-			rl.TextFormat(
-				"Virtual Mouse: X : %i,Y : %i",
-				int(virtual_mouse.x),
-				int(virtual_mouse.y),
-			),
-			300,
-			55,
-			20,
-			rl.YELLOW,
-		)
+		//rl.ClearBackground(rl.BLUE)
+		//rl.DrawText(
+		// 	rl.TextFormat(
+		// 		"Virtual Mouse: X : %i,Y : %i",
+		// 		int(virtual_mouse.x),
+		// 		int(virtual_mouse.y),
+		// 	),
+		// 	300,
+		// 	55,
+		// 	20,
+		// 	rl.YELLOW,
+		// )
 		lua_draw(L, lua_dt)
 		rl.EndTextureMode()
 

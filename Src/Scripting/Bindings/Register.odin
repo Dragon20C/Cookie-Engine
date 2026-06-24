@@ -1,11 +1,17 @@
 package Bindings
 
+import "core:fmt"
 import lua "vendor:lua/5.4"
 
 register_all_bindings :: proc(L: ^lua.State) {
 	register_cookie(L)
 	register_gfx(L)
 
+}
+
+register_function :: proc(L: ^lua.State, name: cstring, fn: lua.CFunction) {
+	lua.pushcfunction(L, fn)
+	lua.setfield(L, -2, name)
 }
 
 get_int :: proc(L: ^lua.State, idx: i32) -> (i32, b32) {
@@ -35,4 +41,8 @@ get_bool :: proc(L: ^lua.State, idx: i32) -> (b32, b32) {
 		return lua.toboolean(L, idx), true
 	}
 	return false, false
+}
+
+debug_type :: proc(L: ^lua.State, idx: i32) {
+	fmt.println(lua.type(L, idx))
 }
