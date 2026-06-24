@@ -19,7 +19,7 @@ COLORS: [16]u32 = {
 	0x0D9B76FF, // 9 jade
 	0x164475FF, // 10 navy
 	0x1673FFFF, // 11 azure
-	0x9872AFF, // 12 amethyst
+	0x9872AFFF, // 12 amethyst
 	0xFFB1CBFF, // 13 candy
 	0xFE3648FF, // 14 watermelon
 	0xDA4D52FF, // 15 rose
@@ -42,7 +42,6 @@ COLORS_NAME: [16]cstring = {
 	"WATERMELON",
 	"ROSE",
 }
-
 thickness := f32(2)
 
 register_gfx :: proc(L: ^lua.State) {

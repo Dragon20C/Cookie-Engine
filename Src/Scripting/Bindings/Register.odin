@@ -6,6 +6,7 @@ import lua "vendor:lua/5.4"
 register_all_bindings :: proc(L: ^lua.State) {
 	register_cookie(L)
 	register_gfx(L)
+	register_input(L)
 
 }
 

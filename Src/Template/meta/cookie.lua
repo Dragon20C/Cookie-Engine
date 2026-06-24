@@ -53,7 +53,6 @@ gfx.ROSE       = 15 --- #DA4D52
 
 
 
-
 ---Clears the screen with a given color.
 ---@param color integer
 function gfx.clear(color) end
@@ -82,3 +81,52 @@ function gfx.circle(filled, x, y, radius, color) end
 ---@param y2 number
 ---@param color integer
 function gfx.line(x1, y1, x2, y2, color) end
+
+input              = {}
+
+input.ENTER        = 0
+input.ESCAPE       = 1
+input.SPACE        = 2
+input.LEFT         = 3
+input.RIGHT        = 4
+input.UP           = 5
+input.DOWN         = 6
+
+input.MOUSE_LEFT   = 0
+input.MOUSE_RIGHT  = 1
+input.MOUSE_MIDDLE = 2
+
+--- Returns the mouse position.
+--- @return number x
+--- @return number y
+function input.mouse_position() end
+
+--- Returns whether the mouse button is pressed.
+--- @param mouse_code integer
+--- @return boolean
+function input.mouse_pressed(mouse_code) end
+
+--- Returns whether the mouse button is held down.
+--- @param mouse_code integer
+--- @return boolean
+function input.mouse_held(mouse_code) end
+
+--- Returns whether the mouse button is released.
+--- @param mouse_code integer
+--- @return boolean
+function input.mouse_released(mouse_code) end
+
+--- Pressed once.
+--- @param key_code integer
+--- @return boolean
+function input.pressed(key_code) end
+
+--- Held down.
+--- @param key_code integer
+--- @return boolean
+function input.held(key_code) end
+
+--- Released once.
+--- @param key_code integer
+--- @return boolean
+function input.released(key_code) end
