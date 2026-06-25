@@ -242,8 +242,13 @@ draw_sprite :: proc "c" (L: ^lua.State) -> i32 {
 	cols := f32(sheet.texture.width) / f32(sheet.cell_width)
 	rows := f32(sheet.texture.height) / f32(sheet.cell_height)
 
+	total_frames := cols * rows
+	if frame_id >= i32(total_frames) {
+		return 0; c
+	}
 	cell_x := (frame_id % i32(cols)) * sheet.cell_width
 	cell_y := (frame_id / i32(cols)) * sheet.cell_height
+
 
 	rect := rl.Rectangle{f32(cell_x), f32(cell_y), f32(sheet.cell_width), f32(sheet.cell_height)}
 	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{x, y}, rl.WHITE)
