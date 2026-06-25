@@ -110,7 +110,7 @@ start_raylib_window :: proc(width: i32, height: i32, title: cstring) {
 shutdown_engine :: proc(L: ^lua.State, texture: rl.RenderTexture2D) {
 	lua.close(L)
 	rl.UnloadRenderTexture(texture)
-	bindings.unload_all_sprites()
+	bindings.unload_all_sheets()
 	rl.CloseWindow()
 }
 

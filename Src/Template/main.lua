@@ -1,21 +1,34 @@
-local box = {
+local box        = {
 	color = gfx.MINT,
-	x = 0,
-	y = 0,
-	width = 100,
-	height = 100,
-	speed = 100
+	x = 0.0,
+	y = 0.0,
+	width = 64,
+	height = 64,
+	speed = 50.0
 }
 
-local cookie_sprite = 0
+local sprites    = 0
+
+local frames     = 0
+local timer      = 0.0
+local frame_rate = 0.35
 
 function _init()
 	box.x = cookie.WIDTH / 2 - box.width / 2
 	box.y = cookie.HEIGHT / 2 - box.height / 2
-	cookie_sprite = gfx.load_sprite("cookie.png")
+	local width, height = 16, 16
+	sprites = gfx.load_sheet(width, height, "sprites.png")
 end
 
 function _update(dt)
+	timer = timer + dt
+	if timer >= frame_rate then
+		timer = 0.0
+		frames = frames + 1
+		if frames >= 4 then
+			frames = 0
+		end
+	end
 end
 
 function _fixed_update(dt)
@@ -34,8 +47,11 @@ function _fixed_update(dt)
 end
 
 function _draw(dt)
-	-- Clears the screen with watermelon color.
 	gfx.clear(gfx.WATERMELON)
 	gfx.rectangle(false, box.x, box.y, box.width, box.height, box.color)
-	gfx.draw_sprite(cookie_sprite, 0, 0, 16, 16, box.x, box.y)
+
+	gfx.sprite(sprites, frames, box.x, box.y)
+	gfx.sprite(sprites, frames + 1, box.x + box.width - 16, box.y)
+	gfx.sprite(sprites, frames + 2, box.x, box.y + box.height - 16)
+	gfx.sprite(sprites, frames + 3, box.x + box.width - 16, box.y + box.height - 16)
 end

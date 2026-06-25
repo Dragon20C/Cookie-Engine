@@ -47,6 +47,14 @@ COLORS_NAME: [16]cstring = {
 }
 thickness := f32(2)
 
+sheet_texture :: struct {
+	cell_width:  i32,
+	cell_height: i32,
+	texture:     rl.Texture2D,
+}
+
+sheets: map[u32]sheet_texture
+
 textures: map[u32]rl.Texture2D
 next_texture_id: u32 = 1
 
@@ -64,9 +72,13 @@ register_gfx :: proc(L: ^lua.State) {
 	register_function(L, "line", line)
 	register_function(L, "circle", circle)
 
-	register_function(L, "load_sprite", load_sprite)
-	register_function(L, "draw_sprite", draw_sprite)
-	register_function(L, "unload_sprite", unload_sprite)
+	register_function(L, "load_sheet", load_sheet)
+	register_function(L, "sprite", draw_sprite)
+	register_function(L, "unload_sheet", unload_sheet)
+
+	// register_function(L, "load_sprite", load_sprite)
+	// register_function(L, "draw_sprite", draw_sprite)
+	// register_function(L, "unload_sprite", unload_sprite)
 
 	lua.setglobal(L, "gfx")
 }
@@ -179,81 +191,78 @@ line :: proc "c" (L: ^lua.State) -> i32 {
 	return 0
 }
 
-load_sprite :: proc "c" (L: ^lua.State) -> i32 {
-	if !lua.isstring(L, 1) {
+load_sheet :: proc "c" (L: ^lua.State) -> i32 {
+	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) || !lua.isstring(L, 3) {
 		return 0
 	}
 
-	path := lua.tostring(L, 1)
+	cell_width := i32(lua.tointeger(L, 1))
+	cell_height := i32(lua.tointeger(L, 2))
+	path := lua.tostring(L, 3)
+
 	context = runtime.default_context()
-	sprite_path, err := filepath.join({game_path, strings.clone_from_cstring(path)})
+	sheet_path, err := filepath.join({game_path, strings.clone_from_cstring(path)})
 	if err != nil {
 		return 0
 	}
-	texture := rl.LoadTexture(strings.clone_to_cstring(sprite_path))
-	if texture.id == 0 {
+
+	texture := rl.LoadTexture(strings.clone_to_cstring(sheet_path))
+	id := texture.id
+
+	if id == 0 {
 		return 0
 	}
 
-	textures[texture.id] = texture
-
-	lua.pushinteger(L, lua.Integer(texture.id))
+	sheet := sheet_texture {
+		cell_width  = cell_width,
+		cell_height = cell_height,
+		texture     = texture,
+	}
+	sheets[id] = sheet
+	lua.pushinteger(L, lua.Integer(id))
 
 	return 1
 }
 
-unload_sprite :: proc "c" (L: ^lua.State) -> i32 {
+draw_sprite :: proc "c" (L: ^lua.State) -> i32 {
+
+	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) || !lua.isnumber(L, 3) || !lua.isnumber(L, 4) {
+		return 0
+	}
+
+	sheet_id := u32(lua.tointeger(L, 1))
+	frame_id := i32(lua.tointeger(L, 2))
+	x := f32(lua.tonumber(L, 3))
+	y := f32(lua.tonumber(L, 4))
+
+	sheet, ok := sheets[sheet_id]
+	if !ok {
+		return 0
+	}
+	cols := f32(sheet.texture.width) / f32(sheet.cell_width)
+	rows := f32(sheet.texture.height) / f32(sheet.cell_height)
+
+	cell_x := (frame_id % i32(cols)) * sheet.cell_width
+	cell_y := (frame_id / i32(cols)) * sheet.cell_height
+
+	rect := rl.Rectangle{f32(cell_x), f32(cell_y), f32(sheet.cell_width), f32(sheet.cell_height)}
+	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{x, y}, rl.WHITE)
+	return 0
+}
+
+unload_sheet :: proc "c" (L: ^lua.State) -> i32 {
 	if !lua.isinteger(L, 1) {
 		return 0
 	}
 
-	id := u32(lua.tointeger(L, 1))
-	context = runtime.default_context()
-	_, ok := textures[id]
-
+	sheet_id := u32(lua.tointeger(L, 1))
+	_, ok := sheets[sheet_id]
 	if !ok {
 		return 0
 	}
 
-	texture := textures[id]
-	if texture.id == 0 {
-		return 0
-	}
-
-	rl.UnloadTexture(texture)
-
-	delete_key(&textures, id)
-
-	return 0
-}
-
-draw_sprite :: proc "c" (L: ^lua.State) -> i32 {
-	if !lua.isinteger(L, 1) ||
-	   !lua.isnumber(L, 2) ||
-	   !lua.isnumber(L, 3) ||
-	   !lua.isnumber(L, 4) ||
-	   !lua.isnumber(L, 5) ||
-	   !lua.isnumber(L, 6) ||
-	   !lua.isnumber(L, 7) {
-		return 0
-	}
-
-	id := u32(lua.tointeger(L, 1))
-	src_x := f32(lua.tonumber(L, 2))
-	src_y := f32(lua.tonumber(L, 3))
-	width := f32(lua.tonumber(L, 4))
-	height := f32(lua.tonumber(L, 5))
-	dst_x := f32(lua.tonumber(L, 6))
-	dst_y := f32(lua.tonumber(L, 7))
-
-	rl.DrawTexturePro(
-		textures[id],
-		rl.Rectangle{src_x, src_y, width, height},
-		rl.Rectangle{dst_x, dst_y, width, height},
-		0,
-		0,
-		rl.WHITE,
-	)
+	context = runtime.default_context()
+	delete_key(&sheets, sheet_id)
 	return 0
 }
 
@@ -261,7 +270,7 @@ set_path :: proc "c" (game_dir: string) {
 	game_path = game_dir
 }
 
-unload_all_sprites :: proc "c" () {
+unload_all_sheets :: proc "c" () {
 	for _, texture in textures {
 		rl.UnloadTexture(texture)
 	}

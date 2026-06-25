@@ -3,7 +3,7 @@ function _config()
 	return {
 		title = "Game Title",
 		id = "UserName.GameTitle",
-		width = 640,
-		height = 480,
+		width = 192,
+		height = 160,
 	}
 end

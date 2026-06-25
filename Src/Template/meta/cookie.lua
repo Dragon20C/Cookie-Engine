@@ -82,24 +82,42 @@ function gfx.circle(filled, x, y, radius, color) end
 ---@param color integer
 function gfx.line(x1, y1, x2, y2, color) end
 
---- Loads a sprite from a given path.
---- @param path string
---- @return integer
-function gfx.load_sprite(path) end
+--- Loads a sprite sheet from a given path.
+--- @param width number The width of each sprite in the sheet.
+--- @param height number The height of each sprite in the sheet.
+--- @param path string The path to the sprite sheet image.
+--- @return integer The sprite sheet ID.
+function gfx.load_sheet(width, height, path) end
 
---- Unloads a sprite from memory.
---- @param id integer
-function gfx.unload_sprite(id) end
+--- Draws a sprite from a sprite sheet on the screen.
+--- @param sheet integer The sprite sheet to draw from.
+--- @param frame_id number The frame of the sprite to draw on the sheet.
+--- @param x number The x-coordinate to draw the sprite at.
+--- @param y number The y-coordinate to draw the sprite at.
+function gfx.sprite(sheet, frame_id, x, y) end
 
---- Draws a sprite on the screen.
---- @param id integer
---- @param src_x number
---- @param src_y number
---- @param width number
---- @param height number
---- @param dest_x number
---- @param dest_y number
-function gfx.draw_sprite(id, src_x, src_y, width, height, dest_x, dest_y) end
+--- Unloads a sprite sheet from memory.
+--- @param sheet integer The sprite sheet to unload.
+function gfx.unload_sheet(sheet) end
+
+-- --- Loads a sprite from a given path.
+-- --- @param path string
+-- --- @return integer
+-- function gfx.load_sprite(path) end
+
+-- --- Unloads a sprite from memory.
+-- --- @param id integer
+-- function gfx.unload_sprite(id) end
+
+-- --- Draws a sprite on the screen.
+-- --- @param id integer
+-- --- @param src_x number
+-- --- @param src_y number
+-- --- @param width number
+-- --- @param height number
+-- --- @param dest_x number
+-- --- @param dest_y number
+-- function gfx.draw_sprite(id, src_x, src_y, width, height, dest_x, dest_y) end
 
 input              = {}
 
@@ -149,3 +167,20 @@ function input.held(key_code) end
 --- @param key_code integer
 --- @return boolean
 function input.released(key_code) end
+
+utils = {}
+
+--- @Class Utils
+---
+--- @class Utils.Rect
+--- @field x number
+--- @field y number
+--- @field width number
+--- @field height number
+---
+--- @param x number
+--- @param y number
+--- @param width number
+--- @param height number
+--- @return Utils.Rect
+function utils.rect(x, y, width, height) end
