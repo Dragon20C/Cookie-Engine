@@ -244,7 +244,7 @@ draw_sprite :: proc "c" (L: ^lua.State) -> i32 {
 
 	total_frames := cols * rows
 	if frame_id >= i32(total_frames) {
-		return 0; c
+		return 0
 	}
 	cell_x := (frame_id % i32(cols)) * sheet.cell_width
 	cell_y := (frame_id / i32(cols)) * sheet.cell_height
