@@ -50,14 +50,12 @@ thickness := f32(2)
 sheet_texture :: struct {
 	cell_width:  i32,
 	cell_height: i32,
+	rows:        i32,
+	cols:        i32,
 	texture:     rl.Texture2D,
 }
 
 sheets: map[u32]sheet_texture
-
-textures: map[u32]rl.Texture2D
-next_texture_id: u32 = 1
-
 game_path: string
 
 register_gfx :: proc(L: ^lua.State) {
@@ -74,7 +72,7 @@ register_gfx :: proc(L: ^lua.State) {
 	register_function(L, "text", text)
 
 	register_function(L, "load_sheet", load_sheet)
-	register_function(L, "sprite", draw_sprite)
+	register_function(L, "sprite", sprite)
 	register_function(L, "unload_sheet", unload_sheet)
 
 	lua.setglobal(L, "gfx")
@@ -235,9 +233,14 @@ load_sheet :: proc "c" (L: ^lua.State) -> i32 {
 		return 0
 	}
 
+	columns := f32(texture.width) / f32(cell_width)
+	rows := f32(texture.height) / f32(cell_height)
+
 	sheet := sheet_texture {
 		cell_width  = cell_width,
 		cell_height = cell_height,
+		rows        = i32(rows),
+		cols        = i32(columns),
 		texture     = texture,
 	}
 	sheets[id] = sheet
@@ -246,7 +249,7 @@ load_sheet :: proc "c" (L: ^lua.State) -> i32 {
 	return 1
 }
 
-draw_sprite :: proc "c" (L: ^lua.State) -> i32 {
+sprite :: proc "c" (L: ^lua.State) -> i32 {
 
 	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) || !lua.isnumber(L, 3) || !lua.isnumber(L, 4) {
 		return 0
@@ -261,18 +264,16 @@ draw_sprite :: proc "c" (L: ^lua.State) -> i32 {
 	if !ok {
 		return 0
 	}
-	cols := f32(sheet.texture.width) / f32(sheet.cell_width)
-	rows := f32(sheet.texture.height) / f32(sheet.cell_height)
 
-	total_frames := cols * rows
+	total_frames := sheet.cols * sheet.rows
 	if frame_id >= i32(total_frames) {
 		return 0
 	}
-	cell_x := (frame_id % i32(cols)) * sheet.cell_width
-	cell_y := (frame_id / i32(cols)) * sheet.cell_height
+	cell_x := f32((frame_id % sheet.cols) * sheet.cell_width)
+	cell_y := f32((frame_id / sheet.cols) * sheet.cell_height)
 
 
-	rect := rl.Rectangle{f32(cell_x), f32(cell_y), f32(sheet.cell_width), f32(sheet.cell_height)}
+	rect := rl.Rectangle{cell_x, cell_y, f32(sheet.cell_width), f32(sheet.cell_height)}
 	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{x, y}, rl.WHITE)
 	return 0
 }
@@ -283,21 +284,21 @@ unload_sheet :: proc "c" (L: ^lua.State) -> i32 {
 	}
 
 	sheet_id := u32(lua.tointeger(L, 1))
-	_, ok := sheets[sheet_id]
+	sheet, ok := sheets[sheet_id]
 	if !ok {
 		return 0
 	}
-
+	rl.UnloadTexture(sheet.texture)
 	context = runtime.default_context()
 	delete_key(&sheets, sheet_id)
 	return 0
 }
 
 unload_all_sheets :: proc "c" () {
-	for _, texture in textures {
-		rl.UnloadTexture(texture)
+	for _, sheet in sheets {
+		rl.UnloadTexture(sheet.texture)
 	}
-	clear_map(&textures)
+	clear_map(&sheets)
 }
 
 set_path :: proc "c" (game_dir: string) {

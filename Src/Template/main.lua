@@ -53,10 +53,12 @@ end
 function _draw(dt)
 	gfx.clear(gfx.WATERMELON)
 	gfx.rectangle(false, box.x, box.y, box.width, box.height, box.color)
-	gfx.text("FPS: " .. tostring(cookie.get_fps()), 0, 0, 8, gfx.JADE)
+
 
 	gfx.sprite(sprites, frames, box.x, box.y)
 	gfx.sprite(sprites, (frames + 1) % 4, box.x + box.width - 16, box.y)
 	gfx.sprite(sprites, (frames + 2) % 4, box.x, box.y + box.height - 16)
 	gfx.sprite(sprites, (frames + 3) % 4, box.x + box.width - 16, box.y + box.height - 16)
+
+	gfx.text("FPS: " .. tostring(cookie.get_fps()), 0, 0, 8, gfx.OLIVE)
 end
