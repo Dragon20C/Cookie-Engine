@@ -71,14 +71,11 @@ register_gfx :: proc(L: ^lua.State) {
 	register_function(L, "rectangle", rectangle)
 	register_function(L, "line", line)
 	register_function(L, "circle", circle)
+	register_function(L, "text", text)
 
 	register_function(L, "load_sheet", load_sheet)
 	register_function(L, "sprite", draw_sprite)
 	register_function(L, "unload_sheet", unload_sheet)
-
-	// register_function(L, "load_sprite", load_sprite)
-	// register_function(L, "draw_sprite", draw_sprite)
-	// register_function(L, "unload_sprite", unload_sprite)
 
 	lua.setglobal(L, "gfx")
 }
@@ -103,6 +100,31 @@ clear :: proc "c" (L: ^lua.State) -> i32 {
 
 	color := COLORS[color_index]
 	rl.ClearBackground(rl.GetColor(color))
+
+	return 0
+}
+
+text :: proc "c" (L: ^lua.State) -> i32 {
+	if !lua.isstring(L, 1) ||
+	   !lua.isnumber(L, 2) ||
+	   !lua.isnumber(L, 3) ||
+	   !lua.isnumber(L, 4) ||
+	   !lua.isnumber(L, 5) {
+		return 0
+	}
+
+	text := lua.tostring(L, 1)
+	x := f32(lua.tonumber(L, 2))
+	y := f32(lua.tonumber(L, 3))
+	size := f32(lua.tonumber(L, 4))
+	color_index := lua.tointeger(L, 5)
+
+	if color_index < 0 || color_index >= 16 {
+		return 0
+	}
+
+	color := COLORS[color_index]
+	rl.DrawText(text, i32(x), i32(y), i32(size), rl.GetColor(color))
 
 	return 0
 }
@@ -271,13 +293,13 @@ unload_sheet :: proc "c" (L: ^lua.State) -> i32 {
 	return 0
 }
 
-set_path :: proc "c" (game_dir: string) {
-	game_path = game_dir
-}
-
 unload_all_sheets :: proc "c" () {
 	for _, texture in textures {
 		rl.UnloadTexture(texture)
 	}
 	clear_map(&textures)
+}
+
+set_path :: proc "c" (game_dir: string) {
+	game_path = game_dir
 }

@@ -14,6 +14,9 @@
 
 cookie = {}
 
+---@return number Returns the current FPS.
+function cookie.get_fps() end
+
 --- @return Cookie.Config Expects configuration to be returned.
 function _config() end
 
@@ -100,24 +103,13 @@ function gfx.sprite(sheet, frame_id, x, y) end
 --- @param sheet integer The sprite sheet to unload.
 function gfx.unload_sheet(sheet) end
 
--- --- Loads a sprite from a given path.
--- --- @param path string
--- --- @return integer
--- function gfx.load_sprite(path) end
-
--- --- Unloads a sprite from memory.
--- --- @param id integer
--- function gfx.unload_sprite(id) end
-
--- --- Draws a sprite on the screen.
--- --- @param id integer
--- --- @param src_x number
--- --- @param src_y number
--- --- @param width number
--- --- @param height number
--- --- @param dest_x number
--- --- @param dest_y number
--- function gfx.draw_sprite(id, src_x, src_y, width, height, dest_x, dest_y) end
+--- Draws text on the screen.
+--- @param text string The text to draw.
+--- @param x number The x-coordinate to draw the text at.
+--- @param y number The y-coordinate to draw the text at.
+--- @param size number The size of the text.
+--- @param color integer The color of the text.
+function gfx.text(text, x, y, size, color) end
 
 input              = {}
 

@@ -21,7 +21,7 @@ function _init()
 end
 
 function _update(dt)
-	timer = timer + dt
+	-- timer = timer + dt
 	if timer >= frame_rate then
 		timer = 0.0
 		frames = frames + 1
@@ -29,29 +29,34 @@ function _update(dt)
 			frames = 0
 		end
 	end
-end
 
-function _fixed_update(dt)
 	if input.held(input.LEFT) then
 		box.x = box.x - box.speed * dt
 	end
+
 	if input.held(input.RIGHT) then
 		box.x = box.x + box.speed * dt
 	end
+
 	if input.held(input.UP) then
 		box.y = box.y - box.speed * dt
 	end
+
 	if input.held(input.DOWN) then
 		box.y = box.y + box.speed * dt
 	end
 end
 
+function _fixed_update(dt)
+end
+
 function _draw(dt)
 	gfx.clear(gfx.WATERMELON)
 	gfx.rectangle(false, box.x, box.y, box.width, box.height, box.color)
+	gfx.text("FPS: " .. tostring(cookie.get_fps()), 0, 0, 8, gfx.JADE)
 
 	gfx.sprite(sprites, frames, box.x, box.y)
-	gfx.sprite(sprites, frames + 1, box.x + box.width - 16, box.y)
-	gfx.sprite(sprites, frames + 2, box.x, box.y + box.height - 16)
-	gfx.sprite(sprites, frames + 3, box.x + box.width - 16, box.y + box.height - 16)
+	gfx.sprite(sprites, (frames + 1) % 4, box.x + box.width - 16, box.y)
+	gfx.sprite(sprites, (frames + 2) % 4, box.x, box.y + box.height - 16)
+	gfx.sprite(sprites, (frames + 3) % 4, box.x + box.width - 16, box.y + box.height - 16)
 end

@@ -1,6 +1,8 @@
 package Bindings
 
+import "core:c"
 import lua "vendor:lua/5.4"
+import rl "vendor:raylib"
 
 width: i32 = 0
 height: i32 = 0
@@ -18,6 +20,8 @@ register_cookie :: proc(L: ^lua.State) {
 	lua.setfield(L, -2, "IS_DEV")
 	lua.pushnumber(L, lua.Number(elapsed))
 	lua.setfield(L, -2, "Elapsed")
+
+	register_function(L, "get_fps", get_fps)
 
 	lua.setglobal(L, "cookie")
 }
@@ -42,4 +46,12 @@ update_elapsed :: proc(L: ^lua.State, delta: f32) {
 
 	// Pops the Cookie table from the stack
 	lua.pop(L, 1)
+}
+
+get_fps :: proc "c" (L: ^lua.State) -> i32 {
+	// Pushes the FPS value onto the stack
+	lua.pushinteger(L, lua.Integer(rl.GetFPS()))
+
+	// Returns the FPS value
+	return 1
 }
