@@ -18,6 +18,9 @@ function _init()
 	box.y = cookie.HEIGHT / 2 - box.height / 2
 	local width, height = 16, 16
 	sprites = gfx.load_sheet(width, height, "sprites.png")
+	--- Debug feature, scale the window to 2x for low resolution games,
+	--- Only works in window mode.
+	gfx.scale_window(cookie.WIDTH, cookie.HEIGHT, 4)
 end
 
 function _update(dt)

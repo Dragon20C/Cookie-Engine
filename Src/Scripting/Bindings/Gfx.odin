@@ -8,7 +8,6 @@ import "core:strings"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
-
 COLORS: [16]u32 = {
 	0x000000FF, // 0 black
 	0xBA6B4AFF, // 1 clay
@@ -74,6 +73,8 @@ register_gfx :: proc(L: ^lua.State) {
 	register_function(L, "load_sheet", load_sheet)
 	register_function(L, "sprite", sprite)
 	register_function(L, "unload_sheet", unload_sheet)
+
+	register_function(L, "scale_window", scale_window)
 
 	lua.setglobal(L, "gfx")
 }
@@ -299,6 +300,18 @@ unload_all_sheets :: proc "c" () {
 		rl.UnloadTexture(sheet.texture)
 	}
 	clear_map(&sheets)
+}
+
+scale_window :: proc "c" (L: ^lua.State) -> i32 {
+	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) || !lua.isinteger(L, 3) {
+		return 0
+	}
+	width := i32(lua.tointeger(L, 1))
+	height := i32(lua.tointeger(L, 2))
+	scale := i32(lua.tointeger(L, 3))
+
+	rl.SetWindowSize(width * scale, height * scale)
+	return 0
 }
 
 set_path :: proc "c" (game_dir: string) {
