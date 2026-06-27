@@ -112,10 +112,8 @@ function gfx.unload_sheet(sheet) end
 function gfx.text(text, x, y, size, color) end
 
 --- Scales the window size. NOTE: This needs to be improved.
---- @param width number The width of the window.
---- @param height number The height of the window.
 --- @param scale number The scale factor to apply to the window size.
-function gfx.scale_window(width, height, scale) end
+function gfx.scale_window(scale) end
 
 input              = {}
 

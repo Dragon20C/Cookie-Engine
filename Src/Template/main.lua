@@ -20,7 +20,7 @@ function _init()
 	sprites = gfx.load_sheet(width, height, "sprites.png")
 	--- Debug feature, scale the window to 2x for low resolution games,
 	--- Only works in window mode.
-	gfx.scale_window(cookie.WIDTH, cookie.HEIGHT, 4)
+	gfx.scale_window(4)
 end
 
 function _update(dt)

@@ -1,6 +1,7 @@
 package EngineCore
 
 import cfg "../Config"
+import resource "../Resource"
 import rt "../RunTime"
 import lua "../Scripting"
 import bindings "../Scripting/Bindings"
@@ -46,6 +47,11 @@ run :: proc(dir: string, is_dev: bool) {
 	engine.Conf = conf
 	// Cookie requires engine specific values.
 	bindings.set_cookie_defaults(engine.Conf.width, engine.Conf.height, b32(engine.Conf.is_dev))
+
+	resource.game_dir = dir
+	resource.game_width = engine.Conf.width
+	resource.game_height = engine.Conf.height
+
 	bindings.set_path(dir)
 	// Load bindings
 	bindings.register_all_bindings(engine.Lua.L)

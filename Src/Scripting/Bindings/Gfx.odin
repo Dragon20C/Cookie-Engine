@@ -1,5 +1,6 @@
 package Bindings
 
+import renderer "../../Resource"
 import "base:runtime"
 import "core:c"
 import "core:fmt"
@@ -87,18 +88,12 @@ register_color :: proc(L: ^lua.State, name: cstring, index: lua.Integer) {
 clear :: proc "c" (L: ^lua.State) -> i32 {
 	context = runtime.default_context()
 	if !lua.isinteger(L, 1) {
+		lua.L_error(L, "clear: color index must be an integer")
 		return 0
 	}
 
-	color_index := lua.tointeger(L, 1)
-
-	if color_index < 0 || color_index >= 16 {
-
-		return 0
-	}
-
-	color := COLORS[color_index]
-	rl.ClearBackground(rl.GetColor(color))
+	color_index := i32(lua.tointeger(L, 1))
+	renderer.clear(color_index)
 
 	return 0
 }
@@ -216,37 +211,15 @@ load_sheet :: proc "c" (L: ^lua.State) -> i32 {
 	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) || !lua.isstring(L, 3) {
 		return 0
 	}
-
-	cell_width := i32(lua.tointeger(L, 1))
-	cell_height := i32(lua.tointeger(L, 2))
-	path := lua.tostring(L, 3)
-
 	context = runtime.default_context()
-	sheet_path, err := filepath.join({game_path, strings.clone_from_cstring(path)})
-	if err != nil {
-		return 0
-	}
 
-	texture := rl.LoadTexture(strings.clone_to_cstring(sheet_path))
-	id := texture.id
+	id := renderer.load_sheet(
+		u32(lua.tointeger(L, 1)),
+		u32(lua.tointeger(L, 2)),
+		lua.tostring(L, 3),
+	)
 
-	if id == 0 {
-		return 0
-	}
-
-	columns := f32(texture.width) / f32(cell_width)
-	rows := f32(texture.height) / f32(cell_height)
-
-	sheet := sheet_texture {
-		cell_width  = cell_width,
-		cell_height = cell_height,
-		rows        = i32(rows),
-		cols        = i32(columns),
-		texture     = texture,
-	}
-	sheets[id] = sheet
 	lua.pushinteger(L, lua.Integer(id))
-
 	return 1
 }
 
@@ -255,27 +228,13 @@ sprite :: proc "c" (L: ^lua.State) -> i32 {
 	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) || !lua.isnumber(L, 3) || !lua.isnumber(L, 4) {
 		return 0
 	}
-
-	sheet_id := u32(lua.tointeger(L, 1))
-	frame_id := i32(lua.tointeger(L, 2))
-	x := f32(lua.tonumber(L, 3))
-	y := f32(lua.tonumber(L, 4))
-
-	sheet, ok := sheets[sheet_id]
-	if !ok {
-		return 0
-	}
-
-	total_frames := sheet.cols * sheet.rows
-	if frame_id >= i32(total_frames) {
-		return 0
-	}
-	cell_x := f32((frame_id % sheet.cols) * sheet.cell_width)
-	cell_y := f32((frame_id / sheet.cols) * sheet.cell_height)
-
-
-	rect := rl.Rectangle{cell_x, cell_y, f32(sheet.cell_width), f32(sheet.cell_height)}
-	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{x, y}, rl.WHITE)
+	context = runtime.default_context()
+	renderer.sprite(
+		u32(lua.tointeger(L, 1)),
+		i32(lua.tointeger(L, 2)),
+		f32(lua.tonumber(L, 3)),
+		f32(lua.tonumber(L, 4)),
+	)
 	return 0
 }
 
@@ -285,13 +244,8 @@ unload_sheet :: proc "c" (L: ^lua.State) -> i32 {
 	}
 
 	sheet_id := u32(lua.tointeger(L, 1))
-	sheet, ok := sheets[sheet_id]
-	if !ok {
-		return 0
-	}
-	rl.UnloadTexture(sheet.texture)
 	context = runtime.default_context()
-	delete_key(&sheets, sheet_id)
+	renderer.unload_sheet(sheet_id)
 	return 0
 }
 
@@ -303,14 +257,12 @@ unload_all_sheets :: proc "c" () {
 }
 
 scale_window :: proc "c" (L: ^lua.State) -> i32 {
-	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) || !lua.isinteger(L, 3) {
+	if !lua.isinteger(L, 1) {
 		return 0
 	}
-	width := i32(lua.tointeger(L, 1))
-	height := i32(lua.tointeger(L, 2))
-	scale := i32(lua.tointeger(L, 3))
+	context = runtime.default_context()
+	renderer.scale_window(i32(lua.tointeger(L, 1)))
 
-	rl.SetWindowSize(width * scale, height * scale)
 	return 0
 }
 
