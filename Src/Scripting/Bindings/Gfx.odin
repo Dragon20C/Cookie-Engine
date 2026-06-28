@@ -9,59 +9,10 @@ import "core:strings"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
-COLORS: [16]u32 = {
-	0x000000FF, // 0 black
-	0xBA6B4AFF, // 1 clay
-	0xF47F57FF, // 2 coral
-	0xFF8A35FF, // 3 orange
-	0xECC895FF, // 4 sand
-	0xFFE57DFF, // 5 honey
-	0xFDFDFCFF, // 6 ivory
-	0xBAC867FF, // 7 olive
-	0x98DBBEFF, // 8 mint
-	0x0D9B76FF, // 9 jade
-	0x164475FF, // 10 navy
-	0x1673FFFF, // 11 azure
-	0x9872AFFF, // 12 amethyst
-	0xFFB1CBFF, // 13 candy
-	0xFE3648FF, // 14 watermelon
-	0xDA4D52FF, // 15 rose
-}
-COLORS_NAME: [16]cstring = {
-	"BLACK",
-	"CLAY",
-	"CORAL",
-	"ORANGE",
-	"SAND",
-	"HONEY",
-	"IVORY",
-	"OLIVE",
-	"MINT",
-	"JADE",
-	"NAVY",
-	"AZURE",
-	"AMETHYST",
-	"CANDY",
-	"WATERMELON",
-	"ROSE",
-}
-thickness := f32(2)
-
-sheet_texture :: struct {
-	cell_width:  i32,
-	cell_height: i32,
-	rows:        i32,
-	cols:        i32,
-	texture:     rl.Texture2D,
-}
-
-sheets: map[u32]sheet_texture
-game_path: string
-
 register_gfx :: proc(L: ^lua.State) {
 	lua.newtable(L)
 
-	for color, index in COLORS_NAME {
+	for color, index in &renderer.COLORS_NAME {
 		register_color(L, color, lua.Integer(index))
 	}
 
@@ -108,18 +59,13 @@ text :: proc "c" (L: ^lua.State) -> i32 {
 	}
 
 	text := lua.tostring(L, 1)
-	x := f32(lua.tonumber(L, 2))
-	y := f32(lua.tonumber(L, 3))
-	size := f32(lua.tonumber(L, 4))
-	color_index := lua.tointeger(L, 5)
+	x := i32(lua.tonumber(L, 2))
+	y := i32(lua.tonumber(L, 3))
+	size := i32(lua.tonumber(L, 4))
+	color_index := i32(lua.tointeger(L, 5))
 
-	if color_index < 0 || color_index >= 16 {
-		return 0
-	}
-
-	color := COLORS[color_index]
-	rl.DrawText(text, i32(x), i32(y), i32(size), rl.GetColor(color))
-
+	context = runtime.default_context()
+	renderer.text(text, x, y, size, color_index)
 	return 0
 }
 
@@ -138,22 +84,10 @@ rectangle :: proc "c" (L: ^lua.State) -> i32 {
 	r_y := f32(lua.tonumber(L, 3))
 	r_width := f32(lua.tonumber(L, 4))
 	r_height := f32(lua.tonumber(L, 5))
-	color := lua.tointeger(L, 6)
+	color := u32(lua.tointeger(L, 6))
 
-	rect := rl.Rectangle {
-		x      = r_x,
-		y      = r_y,
-		width  = r_width,
-		height = r_height,
-	}
-
-	raylib_color := rl.GetColor(COLORS[color])
-
-	if filled {
-		rl.DrawRectangleRec(rect, raylib_color)
-	} else {
-		rl.DrawRectangleLinesEx(rect, thickness, raylib_color)
-	}
+	context = runtime.default_context()
+	renderer.rectangle(filled, r_x, r_y, r_width, r_height, color)
 
 	return 0
 }
@@ -173,13 +107,8 @@ circle :: proc "c" (L: ^lua.State) -> i32 {
 	radius := f32(lua.tonumber(L, 4))
 	color := lua.tointeger(L, 5)
 
-	raylib_color := rl.GetColor(COLORS[color])
-	pos := rl.Vector2{x, y}
-	if filled {
-		rl.DrawCircleV(pos, radius, raylib_color)
-	} else {
-		rl.DrawCircleLinesV(pos, radius, raylib_color)
-	}
+	context = runtime.default_context()
+	renderer.circle(filled, x, y, radius, i32(color))
 
 	return 0
 }
@@ -193,16 +122,14 @@ line :: proc "c" (L: ^lua.State) -> i32 {
 		return 0
 	}
 
-	x1 := f32(lua.tonumber(L, 1))
-	y1 := f32(lua.tonumber(L, 2))
-	x2 := f32(lua.tonumber(L, 3))
-	y2 := f32(lua.tonumber(L, 4))
-	color := lua.tointeger(L, 5)
+	x1 := i32(lua.tonumber(L, 1))
+	y1 := i32(lua.tonumber(L, 2))
+	x2 := i32(lua.tonumber(L, 3))
+	y2 := i32(lua.tonumber(L, 4))
+	color := i32(lua.tointeger(L, 5))
 
-	raylib_color := rl.GetColor(COLORS[color])
-	start := rl.Vector2{x1, y1}
-	end := rl.Vector2{x2, y2}
-	rl.DrawLineEx(start, end, thickness, raylib_color)
+	context = runtime.default_context()
+	renderer.line(x1, y1, x2, y2, color)
 
 	return 0
 }
@@ -250,10 +177,8 @@ unload_sheet :: proc "c" (L: ^lua.State) -> i32 {
 }
 
 unload_all_sheets :: proc "c" () {
-	for _, sheet in sheets {
-		rl.UnloadTexture(sheet.texture)
-	}
-	clear_map(&sheets)
+	context = runtime.default_context()
+	renderer.unload_all_sheets()
 }
 
 scale_window :: proc "c" (L: ^lua.State) -> i32 {
@@ -264,8 +189,4 @@ scale_window :: proc "c" (L: ^lua.State) -> i32 {
 	renderer.scale_window(i32(lua.tointeger(L, 1)))
 
 	return 0
-}
-
-set_path :: proc "c" (game_dir: string) {
-	game_path = game_dir
 }

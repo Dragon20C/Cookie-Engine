@@ -52,7 +52,6 @@ run :: proc(dir: string, is_dev: bool) {
 	resource.game_width = engine.Conf.width
 	resource.game_height = engine.Conf.height
 
-	bindings.set_path(dir)
 	// Load bindings
 	bindings.register_all_bindings(engine.Lua.L)
 

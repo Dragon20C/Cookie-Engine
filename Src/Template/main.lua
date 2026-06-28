@@ -48,6 +48,21 @@ function _update(dt)
 	if input.held(input.DOWN) then
 		box.y = box.y + box.speed * dt
 	end
+	print("x :", box.x, " y :", box.y)
+
+	if box.x + box.width > cookie.WIDTH then
+		box.x = cookie.WIDTH - box.width
+	end
+	if box.x - 1 < 0 then
+		box.x = 1
+	end
+
+	if box.y + box.height > cookie.HEIGHT then
+		box.y = cookie.HEIGHT - box.height
+	end
+	if box.y - 1 < 0 then
+		box.y = 1
+	end
 end
 
 function _fixed_update(dt)

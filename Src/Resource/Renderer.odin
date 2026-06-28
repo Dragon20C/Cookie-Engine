@@ -66,6 +66,65 @@ clear :: proc(color_index: i32) {
 	rl.ClearBackground(color)
 }
 
+rectangle :: proc(filled: b32, r_x: f32, r_y: f32, r_width: f32, r_height: f32, color_index: u32) {
+
+
+	if color_index >= len(COLORS) {
+		return
+	}
+
+	rect := rl.Rectangle {
+		x      = r_x,
+		y      = r_y,
+		width  = r_width,
+		height = r_height,
+	}
+
+	raylib_color := rl.GetColor(COLORS[color_index])
+
+	if filled {
+		rl.DrawRectangleRec(rect, raylib_color)
+	} else {
+		rl.DrawRectangleLinesEx(rect, f32(draw_thickness), raylib_color)
+	}
+}
+
+line :: proc(x1: i32, y1: i32, x2: i32, y2: i32, color_index: i32) {
+
+	if color_index >= len(COLORS) {
+		return
+	}
+	color := rl.GetColor(COLORS[color_index])
+	start := rl.Vector2{f32(x1), f32(y1)}
+	end := rl.Vector2{f32(x2), f32(y2)}
+	rl.DrawLineEx(start, end, f32(draw_thickness), color)
+}
+
+circle :: proc(filled: b32, x: f32, y: f32, radius: f32, color_index: i32) {
+
+	if color_index >= len(COLORS) {
+		return
+	}
+
+	color := rl.GetColor(COLORS[color_index])
+
+	pos := rl.Vector2{x, y}
+	if filled {
+		rl.DrawCircleV(pos, radius, color)
+	} else {
+		rl.DrawCircleLinesV(pos, radius, color)
+	}
+}
+
+text :: proc(text: cstring, x: i32, y: i32, size: i32, color_index: i32) {
+	if color_index < 0 || color_index >= 16 {
+		return
+	}
+
+	color := COLORS[color_index]
+	rl.DrawText(text, i32(x), i32(y), i32(size), rl.GetColor(color))
+}
+
 load_sheet :: proc(cell_width: u32, cell_height: u32, path: cstring) -> u32 {
 	context = runtime.default_context()
 
@@ -99,6 +158,14 @@ unload_sheet :: proc(sheet_id: u32) {
 	}
 }
 
+unload_all_sheets :: proc() {
+	for _, sheet in sheets {
+		rl.UnloadTexture(sheet.texture)
+	}
+	clear_map(&sheets)
+}
+
+
 sprite :: proc(sheet_id: u32, frame_id: i32, x: f32, y: f32) {
 	context = runtime.default_context()
 
@@ -114,7 +181,6 @@ sprite :: proc(sheet_id: u32, frame_id: i32, x: f32, y: f32) {
 	rect := rl.Rectangle{cell_x, cell_y, f32(sheet.cell_width), f32(sheet.cell_height)}
 	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{x, y}, rl.WHITE)
 }
-
 
 scale_window :: proc(scale: i32) {
 	rl.SetWindowSize(game_width * scale, game_height * scale)
