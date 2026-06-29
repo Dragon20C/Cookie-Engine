@@ -69,7 +69,7 @@ clear :: proc(color_index: i32) {
 rectangle :: proc(filled: b32, r_x: f32, r_y: f32, r_width: f32, r_height: f32, color_index: u32) {
 
 
-	if color_index >= len(COLORS) {
+	if color_index < 0 || color_index >= len(COLORS) {
 		return
 	}
 

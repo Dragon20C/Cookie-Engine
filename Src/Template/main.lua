@@ -8,7 +8,7 @@ local box        = {
 }
 
 local sprites    = 0
-
+local hurt_sfx   = sfx.load("sfx/hitHurt.ogg")
 local frames     = 0
 local timer      = 0.0
 local frame_rate = 0.35
@@ -33,6 +33,11 @@ function _update(dt)
 		end
 	end
 
+	if input.pressed(input.SPACE) then
+		sfx.play(hurt_sfx)
+		print("Space pressed")
+	end
+
 	if input.held(input.LEFT) then
 		box.x = box.x - box.speed * dt
 	end
@@ -48,7 +53,7 @@ function _update(dt)
 	if input.held(input.DOWN) then
 		box.y = box.y + box.speed * dt
 	end
-	print("x :", box.x, " y :", box.y)
+	---print("x :", box.x, " y :", box.y)
 
 	if box.x + box.width > cookie.WIDTH then
 		box.x = cookie.WIDTH - box.width

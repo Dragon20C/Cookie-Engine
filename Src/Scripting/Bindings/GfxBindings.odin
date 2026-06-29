@@ -2,12 +2,7 @@ package Bindings
 
 import renderer "../../Resource"
 import "base:runtime"
-import "core:c"
-import "core:fmt"
-import "core:path/filepath"
-import "core:strings"
 import lua "vendor:lua/5.4"
-import rl "vendor:raylib"
 
 register_gfx :: proc(L: ^lua.State) {
 	lua.newtable(L)
