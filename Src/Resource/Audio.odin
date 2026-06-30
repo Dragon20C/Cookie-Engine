@@ -20,7 +20,6 @@ load_sfx :: proc(path: string) -> i32 {
 		fmt.println("Failed to join audio path: ", err)
 		return -1
 	}
-	fmt.println("Loading audio: ", audio_path)
 	sound := rl.LoadSound(strings.clone_to_cstring(audio_path))
 	sfx_database[id_counter] = sound
 	id_counter += 1
@@ -36,9 +35,7 @@ unload_sfx :: proc(id: i32) {
 }
 
 play_sfx :: proc(id: i32) {
-	fmt.println("Playing sound with ID: ", id)
 	if id in sfx_database {
-		fmt.println("Sound found, playing...")
 		rl.PlaySound(sfx_database[id])
 	}
 }

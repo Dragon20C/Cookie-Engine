@@ -5,6 +5,7 @@ import resource "../Resource"
 import rt "../RunTime"
 import lua "../Scripting"
 import bindings "../Scripting/Bindings"
+import tools "../luaTools"
 import "core:fmt"
 import "core:path/filepath"
 import "core:strings"
@@ -28,12 +29,11 @@ Engine :: struct {
 }
 
 engine: Engine
-lua_utils: string = "../Utils/utils.lua"
 
 run :: proc(dir: string, is_dev: bool) {
+	fmt.println("Running game from directory: ", dir)
 	// Initialise the engine
 	init_engine()
-
 	// Load configuration
 	conf, ok, err := cfg.read_config(dir, is_dev)
 	if !ok {
@@ -48,9 +48,13 @@ run :: proc(dir: string, is_dev: bool) {
 	// Cookie requires engine specific values.
 	bindings.set_cookie_defaults(engine.Conf.width, engine.Conf.height, b32(engine.Conf.is_dev))
 
+	// Set run time methods that are required for setup.
 	resource.game_dir = dir
 	resource.game_width = engine.Conf.width
 	resource.game_height = engine.Conf.height
+
+	// Load the lua tools script first, so that we can use it in main.lua
+	tools.load_tools(engine.Lua.L)
 
 	// Load bindings
 	bindings.register_all_bindings(engine.Lua.L)
@@ -90,7 +94,6 @@ init_engine :: proc() {
 make_engine :: proc() -> Engine {
 	return Engine{Conf = cfg.make_config(), Lua = lua.make_lua_vm()}
 }
-
 
 report_error :: proc(err: EngineError) {
 	switch err.kind {

@@ -101,6 +101,7 @@ render_texture :: proc(texture: rl.RenderTexture2D, scale: f32) {
 }
 
 start_raylib_window :: proc(width: i32, height: i32, title: cstring) {
+	rl.SetTraceLogLevel(rl.TraceLogLevel.WARNING)
 	rl.SetConfigFlags({rl.ConfigFlag.WINDOW_RESIZABLE, rl.ConfigFlag.VSYNC_HINT})
 	rl.InitWindow(width, height, title)
 	rl.SetWindowMinSize(244, 144)

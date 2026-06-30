@@ -179,19 +179,40 @@ function sfx.unload(sound_id) end
 ---@param sound_id integer The sound ID to play.
 function sfx.play(sound_id) end
 
-utils = {}
+---@class Rect
+---@field x number
+---@field y number
+---@field width number
+---@field height number
 
---- @Class Utils
----
---- @class Utils.Rect
---- @field x number
---- @field y number
---- @field width number
---- @field height number
----
---- @param x number
---- @param y number
---- @param width number
---- @param height number
---- @return Utils.Rect
-function utils.rect(x, y, width, height) end
+---@class Rect
+Rect = {}
+
+---Creates a new rectangle.
+---@param x number
+---@param y number
+---@param width number
+---@param height number
+---@return Rect
+function Rect.new(x, y, width, height) end
+
+---Checks if this rectangle intersects another.
+---@param other Rect
+---@return boolean
+function Rect:intersects(other) end
+
+---Checks whether a point is inside the rectangle.
+---@param x number
+---@param y number
+---@return boolean
+function Rect:containsPoint(x, y) end
+
+---Moves the rectangle.
+---@param x number
+---@param y number
+function Rect:setPosition(x, y) end
+
+---Moves the rectangle
+---@param dx number
+---@param dy number
+function Rect:move(dx, dy) end

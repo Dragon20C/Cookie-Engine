@@ -1,9 +1,8 @@
+print("Rect in main:", Rect)
+
 local box        = {
 	color = gfx.MINT,
-	x = 0.0,
-	y = 0.0,
-	width = 64,
-	height = 64,
+	rect = Rect.new(0.0, 0.0, 64, 64),
 	speed = 50.0
 }
 
@@ -14,8 +13,11 @@ local timer      = 0.0
 local frame_rate = 0.35
 
 function _init()
-	box.x = cookie.WIDTH / 2 - box.width / 2
-	box.y = cookie.HEIGHT / 2 - box.height / 2
+	local x_pos = cookie.WIDTH / 2 - box.rect.width / 2
+	local y_pos = cookie.HEIGHT / 2 - box.rect.height / 2
+	box.rect:setPosition(x_pos, y_pos)
+
+
 	local width, height = 16, 16
 	sprites = gfx.load_sheet(width, height, "sprites.png")
 	--- Debug feature, scale the window to 2x for low resolution games,
@@ -39,35 +41,35 @@ function _update(dt)
 	end
 
 	if input.held(input.LEFT) then
-		box.x = box.x - box.speed * dt
+		box.rect:move(-box.speed * dt, 0)
 	end
 
 	if input.held(input.RIGHT) then
-		box.x = box.x + box.speed * dt
+		box.rect:move(box.speed * dt, 0)
 	end
 
 	if input.held(input.UP) then
-		box.y = box.y - box.speed * dt
+		box.rect:move(0, -box.speed * dt)
 	end
 
 	if input.held(input.DOWN) then
-		box.y = box.y + box.speed * dt
+		box.rect:move(0, box.speed * dt)
 	end
 	---print("x :", box.x, " y :", box.y)
 
-	if box.x + box.width > cookie.WIDTH then
-		box.x = cookie.WIDTH - box.width
-	end
-	if box.x - 1 < 0 then
-		box.x = 1
-	end
+	-- if box.x + box.width > cookie.WIDTH then
+	-- 	box.x = cookie.WIDTH - box.width
+	-- end
+	-- if box.x - 1 < 0 then
+	-- 	box.x = 1
+	-- end
 
-	if box.y + box.height > cookie.HEIGHT then
-		box.y = cookie.HEIGHT - box.height
-	end
-	if box.y - 1 < 0 then
-		box.y = 1
-	end
+	-- if box.y + box.height > cookie.HEIGHT then
+	-- 	box.y = cookie.HEIGHT - box.height
+	-- end
+	-- if box.y - 1 < 0 then
+	-- 	box.y = 1
+	-- end
 end
 
 function _fixed_update(dt)
@@ -75,13 +77,16 @@ end
 
 function _draw(dt)
 	gfx.clear(gfx.WATERMELON)
-	gfx.rectangle(false, box.x, box.y, box.width, box.height, box.color)
+	local x_pos, y_pos = box.rect.x, box.rect.y
+	local width, height = box.rect.width, box.rect.height
+
+	gfx.rectangle(false, x_pos, y_pos, width, height, box.color)
 
 
-	gfx.sprite(sprites, frames, box.x, box.y)
-	gfx.sprite(sprites, (frames + 1) % 4, box.x + box.width - 16, box.y)
-	gfx.sprite(sprites, (frames + 2) % 4, box.x, box.y + box.height - 16)
-	gfx.sprite(sprites, (frames + 3) % 4, box.x + box.width - 16, box.y + box.height - 16)
+	gfx.sprite(sprites, frames, x_pos, y_pos)
+	gfx.sprite(sprites, (frames + 1) % 4, x_pos + width - 16, y_pos)
+	gfx.sprite(sprites, (frames + 2) % 4, x_pos, y_pos + height - 16)
+	gfx.sprite(sprites, (frames + 3) % 4, x_pos + width - 16, y_pos + height - 16)
 
 	gfx.text("FPS: " .. tostring(cookie.get_fps()), 0, 0, 8, gfx.OLIVE)
 end
