@@ -39,3 +39,10 @@ play_sfx :: proc(id: i32) {
 		rl.PlaySound(sfx_database[id])
 	}
 }
+
+unload_all_sfx :: proc() {
+	for id, sound in sfx_database {
+		rl.UnloadSound(sound)
+	}
+	sfx_database = map[i32]rl.Sound{}
+}

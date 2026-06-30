@@ -41,5 +41,3 @@ function Rect:move(dx, dy)
 	self.x = self.x + dx
 	self.y = self.y + dy
 end
-
-print("Rect loaded:", Rect)

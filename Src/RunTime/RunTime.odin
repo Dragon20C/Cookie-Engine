@@ -1,5 +1,6 @@
 package RunTime
 
+import res "../Resource"
 import bindings "../Scripting/Bindings"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
@@ -112,6 +113,7 @@ shutdown_engine :: proc(L: ^lua.State, texture: rl.RenderTexture2D) {
 	lua.close(L)
 	rl.UnloadRenderTexture(texture)
 	bindings.unload_all_sheets()
+	res.unload_all_sfx()
 	rl.CloseWindow()
 }
 

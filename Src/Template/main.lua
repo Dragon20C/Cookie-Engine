@@ -1,5 +1,3 @@
-print("Rect in main:", Rect)
-
 local box        = {
 	color = gfx.MINT,
 	rect = Rect.new(0.0, 0.0, 64, 64),
@@ -18,15 +16,15 @@ function _init()
 	box.rect:setPosition(x_pos, y_pos)
 
 
-	local width, height = 16, 16
-	sprites = gfx.load_sheet(width, height, "sprites.png")
-	--- Debug feature, scale the window to 2x for low resolution games,
+	local cell_width, cell_height = 16, 16
+	sprites = gfx.load_sheet(cell_width, cell_height, "sprites.png")
+	--- Debug feature, scale the window to 4x for low resolution games,
 	--- Only works in window mode.
 	gfx.scale_window(4)
 end
 
 function _update(dt)
-	-- timer = timer + dt
+	timer = timer + dt
 	if timer >= frame_rate then
 		timer = 0.0
 		frames = frames + 1
@@ -34,42 +32,46 @@ function _update(dt)
 			frames = 0
 		end
 	end
-
+	local x, y = 0, 0
 	if input.pressed(input.SPACE) then
 		sfx.play(hurt_sfx)
-		print("Space pressed")
 	end
 
 	if input.held(input.LEFT) then
-		box.rect:move(-box.speed * dt, 0)
-	end
-
-	if input.held(input.RIGHT) then
-		box.rect:move(box.speed * dt, 0)
+		x = -1
+		-- box.rect:move(-box.speed * dt, 0)
+	elseif input.held(input.RIGHT) then
+		x = 1
+	else
+		x = 0
 	end
 
 	if input.held(input.UP) then
-		box.rect:move(0, -box.speed * dt)
+		y = -1
+		-- box.rect:move(-box.speed * dt, 0)
+	elseif input.held(input.DOWN) then
+		y = 1
+	else
+		y = 0
+	end
+	x, y = utils.vec2_normalize(x, y)
+	print("x: " .. x .. " y: " .. y)
+	box.rect:move(x * box.speed * dt, y * box.speed * dt)
+
+
+	if box.rect.x + box.rect.width > cookie.WIDTH then
+		box.rect.x = cookie.WIDTH - box.rect.width
+	end
+	if box.rect.x < 0 then
+		box.rect.x = 0
 	end
 
-	if input.held(input.DOWN) then
-		box.rect:move(0, box.speed * dt)
+	if box.rect.y + box.rect.height > cookie.HEIGHT then
+		box.rect.y = cookie.HEIGHT - box.rect.height
 	end
-	---print("x :", box.x, " y :", box.y)
-
-	-- if box.x + box.width > cookie.WIDTH then
-	-- 	box.x = cookie.WIDTH - box.width
-	-- end
-	-- if box.x - 1 < 0 then
-	-- 	box.x = 1
-	-- end
-
-	-- if box.y + box.height > cookie.HEIGHT then
-	-- 	box.y = cookie.HEIGHT - box.height
-	-- end
-	-- if box.y - 1 < 0 then
-	-- 	box.y = 1
-	-- end
+	if box.rect.y < 0 then
+		box.rect.y = 0
+	end
 end
 
 function _fixed_update(dt)

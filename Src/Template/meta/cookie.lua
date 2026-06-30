@@ -216,3 +216,11 @@ function Rect:setPosition(x, y) end
 ---@param dx number
 ---@param dy number
 function Rect:move(dx, dy) end
+
+utils = {}
+
+--- limits the length of the vec to 1.
+---@param x number
+---@param y number
+--- @return number nx, number ny
+function utils.vec2_normalize(x, y) end
