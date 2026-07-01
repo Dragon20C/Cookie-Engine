@@ -10,6 +10,8 @@ local frames     = 0
 local timer      = 0.0
 local frame_rate = 0.35
 
+local event_1    = Event.new()
+
 function _init()
 	local x_pos = cookie.WIDTH / 2 - box.rect.width / 2
 	local y_pos = cookie.HEIGHT / 2 - box.rect.height / 2
@@ -20,7 +22,10 @@ function _init()
 	sprites = gfx.load_sheet(cell_width, cell_height, "sprites.png")
 	--- Debug feature, scale the window to 4x for low resolution games,
 	--- Only works in window mode.
-	gfx.scale_window(4)
+	gfx.scale_window(2)
+
+	Event.subscribe(event_1, PrintPosition)
+	print("Event id :", event_1)
 end
 
 function _update(dt)
@@ -34,7 +39,7 @@ function _update(dt)
 	end
 	local x, y = 0, 0
 	if input.pressed(input.SPACE) then
-		sfx.play(hurt_sfx)
+		Event.trigger(event_1)
 	end
 
 	if input.held(input.LEFT) then
@@ -55,7 +60,7 @@ function _update(dt)
 		y = 0
 	end
 	x, y = utils.vec2_normalize(x, y)
-	print("x: " .. x .. " y: " .. y)
+	-- print("x: " .. x .. " y: " .. y)
 	box.rect:move(x * box.speed * dt, y * box.speed * dt)
 
 
@@ -90,5 +95,10 @@ function _draw(dt)
 	gfx.sprite(sprites, (frames + 2) % 4, x_pos, y_pos + height - 16)
 	gfx.sprite(sprites, (frames + 3) % 4, x_pos + width - 16, y_pos + height - 16)
 
-	gfx.text("FPS: " .. tostring(cookie.get_fps()), 0, 0, 8, gfx.OLIVE)
+	gfx.text("FPS: " .. tostring(cookie.get_fps()), 2, 2, 8, gfx.OLIVE)
+end
+
+function PrintPosition()
+	print("Box position: " .. box.rect.x .. ", " .. box.rect.y)
+	sfx.play(hurt_sfx)
 end

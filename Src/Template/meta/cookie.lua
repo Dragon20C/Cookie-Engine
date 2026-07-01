@@ -224,3 +224,24 @@ utils = {}
 ---@param y number
 --- @return number nx, number ny
 function utils.vec2_normalize(x, y) end
+
+Event = {}
+
+--- Creates a new event and returns its ID.
+--- @return integer
+function Event.new() end
+
+--- Subscribes a callback function to an event.
+--- @param event_id integer The ID of the event to subscribe to.
+--- @param callback function The callback function to be called when the event is triggered.
+function Event.subscribe(event_id, callback) end
+
+--- Unsubscribes a callback function from an event.
+--- @param event_id integer The ID of the event to unsubscribe from.
+--- @param callback function The callback function to be removed from the event.
+function Event.unsubscribe(event_id, callback) end
+
+--- Triggers an event, calling all subscribed callback functions.
+--- @param event_id integer The ID of the event to trigger.
+--- @param ... any Additional arguments to pass to the callback functions.
+function Event.trigger(event_id, ...) end

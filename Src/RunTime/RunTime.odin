@@ -33,6 +33,8 @@ loop :: proc(L: ^lua.State, texture: rl.RenderTexture2D, width: i32, height: i32
 		virtual_mouse := calculate_virtual_mouse(width, height, window_scale)
 		bindings.update_virtual_mouse_pos(virtual_mouse)
 
+		res.event_loop(L)
+
 		for accumulator >= FIXED_TIMESTEP {
 			lua_fixed_update(L, lua.Number(FIXED_TIMESTEP))
 			accumulator -= FIXED_TIMESTEP
