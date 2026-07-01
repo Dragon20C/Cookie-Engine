@@ -5,6 +5,8 @@ Cookie engine is a 2D game engine perfect for making pixel art games using lua 5
 <p align="center">WARNING</p> 
 <p align="center"> Cookie engine is experimental and does and will have bugs and issues. </p>
 
+<p align="center"> This project is licensed under the GNU GPL v3.0. See the LICENSE file for details. </p>
+
 # Building
 
 Currently Cookie Engine requires you build the project, in the future there is plans on making it easier to install but for now the only option is to build the project.
