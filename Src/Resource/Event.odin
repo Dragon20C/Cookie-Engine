@@ -61,6 +61,7 @@ unsubscribe :: proc(event_id: i32, L: ^lua.State) {
 
 		if lua.rawequal(L, 2, -1) {
 			events[event_id][index].alive = false
+			has_dead_listeners = true
 			break
 		}
 

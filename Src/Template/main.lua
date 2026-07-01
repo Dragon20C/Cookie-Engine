@@ -40,6 +40,7 @@ function _update(dt)
 	local x, y = 0, 0
 	if input.pressed(input.SPACE) then
 		Event.trigger(event_1)
+		Event.unsubscribe(event_1, PrintPosition)
 	end
 
 	if input.held(input.LEFT) then
