@@ -1,5 +1,4 @@
-_G.Rect = _G.Rect or {}
-local Rect = _G.Rect
+local Rect = {}
 Rect.__index = Rect
 
 function Rect.new(x, y, width, height)
@@ -11,9 +10,9 @@ function Rect.new(x, y, width, height)
 	}, Rect)
 end
 
--- function Rect:__tostring()
--- 	return string.format("Rect(x: %d, y: %d, width: %d, height: %d)", self.x, self.y, self.width, self.height)
--- end
+function Rect:__tostring()
+	return string.format("Rect(x: %d, y: %d, width: %d, height: %d)", self.x, self.y, self.width, self.height)
+end
 
 function Rect:intersects(other)
 	return self.x < other.x + other.width and
@@ -41,3 +40,5 @@ function Rect:move(dx, dy)
 	self.x = self.x + dx
 	self.y = self.y + dy
 end
+
+return Rect
