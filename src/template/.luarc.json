@@ -1,0 +1,9 @@
+{
+	"$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+	"runtime.version": "Lua 5.4",
+	"workspace.library": ["./meta"],
+	"format.defaultConfig": {
+		"indent_style": "tab",
+		"indent_size": "4"
+	}
+}
