@@ -37,6 +37,9 @@ function _update(dt)
 			frames = 0
 		end
 	end
+end
+
+function _fixed_update(dt)
 	local x, y = 0, 0
 	if input.pressed(input.SPACE) then
 		Event.trigger(event_1)
@@ -78,9 +81,6 @@ function _update(dt)
 	if box.rect.y < 0 then
 		box.rect.y = 0
 	end
-end
-
-function _fixed_update(dt)
 end
 
 function _draw(dt)
