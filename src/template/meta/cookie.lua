@@ -31,3 +31,7 @@ function _fixed_update(dt) end
 --- Draw is called each frame specifically for drawing onto the screen.
 ---@param dt number Delta time is the time interval between the current frame and the previous frame.
 function _draw(dt) end
+
+--- --- Scales the window by the specified multiplier.
+--- @param multiplier number The multiplier to scale the window by.
+function cookie.scale_window(multiplier) end
