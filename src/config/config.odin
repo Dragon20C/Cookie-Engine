@@ -2,6 +2,7 @@ package config
 // Config script.
 
 import err "../error"
+import "core:fmt"
 import "core:os"
 import "core:path/filepath"
 import "core:strings"
@@ -12,6 +13,7 @@ Configuration :: struct {
 	title:       string,
 	id:          string,
 	is_dev:      bool,
+	fullscreen:  bool,
 	game_width:  int,
 	game_height: int,
 }
@@ -21,6 +23,7 @@ Config := Configuration {
 	title       = "Cookie Engine Game",
 	id          = "com.cookieengine.game",
 	is_dev      = true,
+	fullscreen  = false,
 	game_width  = 800,
 	game_height = 600,
 }
@@ -29,18 +32,28 @@ L: ^lua.State
 
 read_project_config :: proc() -> err.Error {
 
-	config_file, join_err := filepath.join({Config.project_dir, "config.lua"})
-	if join_err != nil {
+	if Config.project_dir == "" {
 		return err.Error {
-			kind = err.ErrorType.Warning,
-			message = "Failed to join project directory and conf.lua together, defaults are being used instead.",
+			kind = err.ErrorType.Fatal,
+			message = "Project dir is empty or invalid, cookie engine can´t continue.",
 		}
 	}
 
+	config_file, join_err := filepath.join({Config.project_dir, "config.lua"})
+	if join_err != nil {
+		err.report_error(
+			err.Error {
+				kind = err.ErrorType.Warning,
+				message = "Failed to join project directory and conf.lua together, defaults are being used instead.",
+			},
+		)
+	}
+
 	if !os.is_file(config_file) {
+		// No point in continuing if no config function exists.
 		return err.Error {
-			kind = err.ErrorType.Warning,
-			message = "No conf.lua file found in project directory, defaults are being used instead.",
+			kind = err.ErrorType.Fatal,
+			message = "No config.lua file found in project directory, defaults are being used instead.",
 		}
 	}
 
@@ -53,10 +66,12 @@ read_project_config :: proc() -> err.Error {
 	if !lua.isfunction(L, -1) {
 		lua.pop(L, 1)
 		lua.close(L)
-		return err.Error {
-			kind = err.ErrorType.Warning,
-			message = "No _config function found in config.lua, defaults are being used instead.",
-		}
+		err.report_error(
+			err.Error {
+				kind = err.ErrorType.Warning,
+				message = "No _config function found in config.lua, defaults are being used instead.",
+			},
+		)
 	}
 
 	lua.call(L, 0, 1)
@@ -64,10 +79,12 @@ read_project_config :: proc() -> err.Error {
 	if !lua.istable(L, -1) {
 		lua.pop(L, 1)
 		lua.close(L)
-		return err.Error {
-			kind = err.ErrorType.Warning,
-			message = "No table returned from _config function in config.lua, defaults are being used instead.",
-		}
+		err.report_error(
+			err.Error {
+				kind = err.ErrorType.Warning,
+				message = "No table returned from _config function in config.lua, defaults are being used instead.",
+			},
+		)
 	}
 
 	lua.getfield(L, -1, "title")
@@ -114,6 +131,9 @@ read_project_config :: proc() -> err.Error {
 }
 
 set_project_dir :: proc(project_dir: string) {
+	if !os.is_dir(project_dir) {
+		return
+	}
 	Config.project_dir = project_dir
 }
 
@@ -154,4 +174,13 @@ game_id_valid :: proc(id: string) -> bool {
 	}
 
 	return true
+}
+
+print_configuration :: proc() {
+	fmt.println("Path :", Config.project_dir)
+	fmt.println("Title :", Config.title)
+	fmt.println("Game ID :", Config.id)
+	fmt.println("Dev Mode :", Config.is_dev)
+	fmt.println("Fullscreen:", Config.fullscreen)
+	fmt.println("Resolution : X", Config.game_width, " Y", Config.game_height)
 }

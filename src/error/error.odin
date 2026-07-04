@@ -31,7 +31,7 @@ report_error :: proc(err: Error) {
 	case .Runtime:
 		fmt.println("ERROR:", err.message)
 	case .Warning:
-		fmt.println("WARN:", err.message)
+		fmt.println("WARNING:", err.message)
 	case .None:
 	}
 }
