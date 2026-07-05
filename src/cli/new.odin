@@ -6,7 +6,7 @@ import fmt "core:fmt"
 import "core:os"
 import "core:path/filepath"
 
-template_dir := "src/template"
+template_dir :: "src/template"
 
 create_project :: proc(args: []string) {
 	if len(args) < 2 {
