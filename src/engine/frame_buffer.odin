@@ -13,13 +13,11 @@ create_frame_buffer :: proc() {
 	rl.SetTextureFilter(render_texture.texture, rl.TextureFilter.BILINEAR)
 }
 
-render_frame_buffer :: proc() {
+render_frame_buffer :: proc(scale: f32) {
 	tex_width := f32(render_texture.texture.width)
 	tex_height := f32(render_texture.texture.height)
 	render_width := f32(rl.GetScreenWidth())
 	render_height := f32(rl.GetScreenHeight())
-
-	scale := calculate_scale(i32(conf.Config.game_width), i32(conf.Config.game_height))
 
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.BLACK)
@@ -40,6 +38,3 @@ render_frame_buffer :: proc() {
 	rl.EndDrawing()
 }
 
-calculate_scale :: proc(width: i32, height: i32) -> f32 {
-	return min(f32(rl.GetScreenWidth()) / f32(width), f32(rl.GetScreenHeight()) / f32(height))
-}
