@@ -14,8 +14,6 @@ start_project :: proc(project_dir: string, is_dev: bool) {
 		err.report_error(config_err)
 	}
 
-	conf.print_configuration()
-
 	core.start_session()
 
 }

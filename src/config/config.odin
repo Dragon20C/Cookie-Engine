@@ -2,6 +2,7 @@ package config
 // Config script.
 
 import err "../error"
+import "base:runtime"
 import "core:fmt"
 import "core:os"
 import "core:path/filepath"
@@ -174,6 +175,26 @@ game_id_valid :: proc(id: string) -> bool {
 	}
 
 	return true
+}
+
+get_main_lua_file :: proc() -> cstring {
+	project_dir := Config.project_dir
+
+	main_lua, join_err := filepath.join({project_dir, "main.lua"})
+
+	if join_err != runtime.Allocator_Error.None {
+		err.report_error(
+			err.Error{err.ErrorType.Fatal, "Failed to join the project dir to main.lua"},
+		)
+		return ""
+	}
+
+	if os.is_file(main_lua) {
+		return strings.clone_to_cstring(main_lua)
+	} else {
+		err.report_error(err.Error{err.ErrorType.Fatal, "main.lua not found in the project dir."})
+		return ""
+	}
 }
 
 print_configuration :: proc() {

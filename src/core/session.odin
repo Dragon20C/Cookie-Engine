@@ -22,6 +22,7 @@ start_session :: proc() {
 	height: i32 = i32(conf.Config.game_height)
 
 	rl.SetConfigFlags({rl.ConfigFlag.WINDOW_RESIZABLE, rl.ConfigFlag.VSYNC_HINT})
+	rl.SetTraceLogLevel(rl.TraceLogLevel.WARNING)
 	rl.SetTargetFPS(60)
 	rl.InitWindow(width, height, title)
 	rl.SetWindowMinSize(244, 144)
@@ -48,6 +49,7 @@ session :: proc() {
 
 		rl.BeginTextureMode(engine.render_texture)
 		draw(delta_time)
+
 		rl.EndTextureMode()
 
 		engine.render_frame_buffer(window_scale)
@@ -62,12 +64,35 @@ close_session :: proc() {
 	fmt.println("Session closed.")
 }
 
-init :: proc() {}
+init :: proc() {
+	lua.getglobal(L, "_init")
+	if !lua.isfunction(L, -1) {
+		lua.pop(L, 1)
+		return
+	}
+	lua.call(L, 0, 0)
+}
 
-update :: proc(dt: f32) {}
+update :: proc(dt: f32) {
+	lua.getglobal(L, "_update")
+	if !lua.isfunction(L, -1) {
+		lua.pop(L, 1)
+		return
+	}
+	lua.pushnumber(L, lua.Number(dt))
+	lua.call(L, 1, 0)
+}
 
 draw :: proc(dt: f32) {
 	rl.ClearBackground(rl.BLUE)
+	lua.getglobal(L, "_draw")
+	if !lua.isfunction(L, -1) {
+		lua.pop(L, 1)
+		return
+	}
+	lua.pushnumber(L, lua.Number(dt))
+
+	lua.call(L, 1, 0)
 }
 
 start_lua_vm :: proc() {
@@ -75,12 +100,19 @@ start_lua_vm :: proc() {
 	lua.L_openlibs(L)
 
 	bindings.register_bindings(L)
+
+	lua_main := conf.get_main_lua_file()
+	fmt.println(lua_main)
+
+	lua_loaded := lua.L_dofile(L, lua_main)
+	if lua_loaded != 0 {
+		err.report_error(err.Error{err.ErrorType.Fatal, "Failed to load main.lua."})
+	}
 }
 
 calculate_scale :: proc(width: i32, height: i32) -> f32 {
 	return min(f32(rl.GetScreenWidth()) / f32(width), f32(rl.GetScreenHeight()) / f32(height))
 }
-
 
 calculate_virtual_mouse :: proc(width: i32, height: i32, scale: f32) -> rl.Vector2 {
 
