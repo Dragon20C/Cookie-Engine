@@ -10,7 +10,7 @@ render_texture: rl.RenderTexture2D
 create_frame_buffer :: proc() {
 	width, height := i32(conf.Config.game_width), i32(conf.Config.game_height)
 	render_texture = rl.LoadRenderTexture(width, height)
-	rl.SetTextureFilter(render_texture.texture, rl.TextureFilter.BILINEAR)
+	rl.SetTextureFilter(render_texture.texture, rl.TextureFilter.POINT)
 }
 
 render_frame_buffer :: proc(scale: f32) {
@@ -37,4 +37,3 @@ render_frame_buffer :: proc(scale: f32) {
 	)
 	rl.EndDrawing()
 }
-

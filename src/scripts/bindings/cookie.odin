@@ -2,6 +2,8 @@ package bindings
 // Cookie script.
 
 import conf "../../config"
+import engine "../../engine"
+import "base:runtime"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
@@ -26,9 +28,20 @@ register_cookie :: proc(L: ^lua.State) {
 	lua.setfield(L, -2, "Elapsed")
 
 	register_function(L, "FPS", get_fps)
+	register_function(L, "scale_window", scale_window)
 
 	lua.setglobal(L, "cookie")
 
+}
+
+scale_window :: proc "c" (L: ^lua.State) -> i32 {
+	if !lua.isnumber(L, 1) {
+		return 0
+	}
+	context = runtime.default_context()
+	engine.scale_window(i32(lua.tonumber(L, 1)))
+
+	return 0
 }
 
 update_elapsed_time :: proc(L: ^lua.State) {

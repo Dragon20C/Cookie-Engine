@@ -70,4 +70,4 @@ function gfx.unload_sheet(sheet) end
 --- @param frame_id integer The index of the sprite frame to draw.
 --- @param x number The x-coordinate to draw the sprite at.
 --- @param y number The y-coordinate to draw the sprite at.
-function gfx.draw_sprite(sheet, frame_id, x, y) end
+function gfx.sprite(sheet, frame_id, x, y) end
