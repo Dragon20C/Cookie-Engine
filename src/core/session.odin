@@ -1,5 +1,6 @@
 package session
 // Session script.
+import "core:path/filepath"
 
 import conf "../config"
 import engine "../engine"
@@ -15,8 +16,6 @@ L: ^lua.State
 start_session :: proc() {
 	err.on_fatal_error = close_session
 
-	start_lua_vm()
-
 	title: cstring = strings.clone_to_cstring(conf.Config.title)
 	width: i32 = i32(conf.Config.game_width)
 	height: i32 = i32(conf.Config.game_height)
@@ -27,13 +26,17 @@ start_session :: proc() {
 	rl.InitWindow(width, height, title)
 	rl.SetWindowMinSize(244, 144)
 
+	engine.load_project_icon()
+	engine.setup_color_palette()
 	engine.create_frame_buffer()
+
+	start_lua_vm()
 
 	session()
 }
 
 session :: proc() {
-	fmt.println("Session in progress.")
+	fmt.println("Session started.")
 
 	width: i32 = i32(conf.Config.game_width)
 	height: i32 = i32(conf.Config.game_height)
