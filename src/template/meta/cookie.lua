@@ -12,6 +12,7 @@
 ---@field width? integer
 ---@field height? integer
 
+---@class Cookie
 cookie = {}
 
 --- @return Cookie.Config Expects configuration to be returned.

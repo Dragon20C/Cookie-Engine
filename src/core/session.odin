@@ -44,6 +44,7 @@ session :: proc() {
 	// Order of execution, init(Once) -> update -> draw
 	init()
 	for !rl.WindowShouldClose() {
+		bindings.update_elapsed_time(L)
 		window_scale := calculate_scale(width, height)
 		mouse_position := calculate_virtual_mouse(width, height, window_scale)
 		delta_time: f32 = rl.GetFrameTime()

@@ -129,8 +129,9 @@ scale_window :: proc(scale: i32) {
 	width := i32(conf.Config.game_width) * scale
 	height := i32(conf.Config.game_height) * scale
 
-	screen_width: i32 = 1920
-	screen_height: i32 = 1080
+	monitor := rl.GetCurrentMonitor()
+	screen_width := i32(rl.GetMonitorWidth(monitor))
+	screen_height := i32(rl.GetMonitorHeight(monitor))
 
 	rl.SetWindowSize(width, height)
 

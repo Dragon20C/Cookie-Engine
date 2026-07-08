@@ -24,7 +24,7 @@ register_cookie :: proc(L: ^lua.State) {
 	lua.pushboolean(L, is_dev)
 	lua.setfield(L, -2, "IS_DEV")
 
-	lua.pushnumber(L, 0.0)
+	lua.pushnumber(L, 0)
 	lua.setfield(L, -2, "Elapsed")
 
 	register_function(L, "FPS", get_fps)
