@@ -1,6 +1,9 @@
 package bindings
 // Input script.
 
+import engine "../../engine"
+import "base:runtime"
+import "core:strings"
 import lua "vendor:lua/5.4"
 import rl "vendor:raylib"
 
@@ -104,6 +107,10 @@ register_inputs :: proc(L: ^lua.State) {
 		register_key(L, constant.name, constant.value)
 	}
 
+	register_function(L, "bind", bind)
+	register_function(L, "unbind", unbind)
+	register_function(L, "pressed", pressed)
+	register_function(L, "held", held)
 	lua.setglobal(L, "input")
 
 }
@@ -119,8 +126,52 @@ bind :: proc "c" (L: ^lua.State) -> i32 {
 		return 0
 	}
 
-	action := lua.tostring(L, 1)
-	index := lua.tointeger(L, 2)
+	context = runtime.default_context()
+
+	action := strings.clone_from_cstring(lua.tostring(L, 1))
+	index := i32(lua.tointeger(L, 2))
+
+	engine.bind(action, index)
 
 	return 0
+}
+
+unbind :: proc "c" (L: ^lua.State) -> i32 {
+	if !lua.isstring(L, 1) || !lua.isinteger(L, 2) {
+		return 0
+	}
+	context = runtime.default_context()
+
+	action := strings.clone_from_cstring(lua.tostring(L, 1))
+	index := i32(lua.tointeger(L, 2))
+
+	engine.unbind(action, index)
+
+	return 0
+}
+
+pressed :: proc "c" (L: ^lua.State) -> i32 {
+
+	if !lua.isstring(L, 1) {
+		return 0
+	}
+	context = runtime.default_context()
+	action := strings.clone_from_cstring(lua.tostring(L, 1))
+
+	result := b32(engine.pressed(action))
+	lua.pushboolean(L, result)
+	return 1
+}
+
+held :: proc "c" (L: ^lua.State) -> i32 {
+
+	if !lua.isstring(L, 1) {
+		return 0
+	}
+	context = runtime.default_context()
+	action := strings.clone_from_cstring(lua.tostring(L, 1))
+
+	result := b32(engine.held(action))
+	lua.pushboolean(L, result)
+	return 1
 }
