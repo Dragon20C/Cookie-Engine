@@ -4,7 +4,12 @@ local chicken = {
 	x = 0,
 	y = 0
 }
-Actions = { Left = "left", Right = "right", Down = "down", Up = "up" }
+Actions = {}
+--- Change this from using string to an integer for performance.
+Actions.Left = input.create_action("Left")
+Actions.Right = input.create_action("Right")
+Actions.Up = input.create_action("Up")
+Actions.Down = input.create_action("Down")
 
 function _init()
 	cookie.scale_window(2)
@@ -24,9 +29,13 @@ function _update(dt)
 	if input.held(Actions.Up) then
 		chicken.y = chicken.y - 100 * dt
 	end
-	if input.held(Actions.Down) then
-		chicken.y = chicken.y + 100 * dt
-	end
+    if input.held(Actions.Down) then
+        chicken.y = chicken.y + 100 * dt
+    end
+
+    if input.released(Actions.Right) then
+	print("Release the demons!")
+    end
 end
 
 function _draw()

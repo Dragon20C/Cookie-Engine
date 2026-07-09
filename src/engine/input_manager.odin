@@ -4,43 +4,75 @@ package engine
 
 import err "../error"
 import rl "vendor:raylib"
+import "core:fmt"
+
+action_data :: struct {
+	keys : [dynamic]i32,
+	action_str : string
+}
+
 // Actions can hold multiple keys which is stored as an array of i32s
-actions: map[string][dynamic]i32
+actions: map[i32]action_data
+action_index : i32 = 0
 
-
-bind :: proc(action: string, index: i32) {
-	_, exists := actions[action]
-	if !exists {
-		actions[action] = make([dynamic]i32)
+create_action :: proc(action : string) {
+	if action_exists(action) {
+		return
+	}
+	data := action_data{
+		keys = make([dynamic]i32),
+		action_str = action
 	}
 
-	_, app_err := append(&actions[action], index)
+	actions[action_index] = data
+	action_index += 1
+}
+
+bind :: proc(action: i32, key_code: i32) {
+	data, exists := &actions[action]
+	if !exists {
+		err.report_error(err.Error{err.ErrorType.Runtime, "Action does not exist, create it first using input.create_action(action)"})
+		return
+	}
+
+	if contains(data.keys,key_code) {
+		return
+	}
+
+	_, app_err := append(&data.keys,key_code)
 	if app_err != .None {
 		err.report_error(err.Error{err.ErrorType.Runtime, "Failed to append to actions array"})
 	}
 }
 
-unbind :: proc(action: string, index: i32) {
-	indexes, exists := actions[action]
+unbind :: proc(action: i32, key_code: i32) {
+	data, exists := &actions[action]
 	if !exists {
+		err.report_error(err.Error{err.ErrorType.Runtime, "Action does not exist, create it first using input.create_action(action)"})
 		return
 	}
 
-	if contains(indexes, index) {
-		unordered_remove(&actions[action], index)
+	if contains(data.keys, key_code) {
+		for result, k_index in data.keys {
+			if result == key_code{
+				unordered_remove_dynamic_array(&data.keys, k_index)
+        		break
+			}
+		}
 	}
 }
 
-pressed :: proc(action: string) -> bool {
+pressed :: proc(action: i32) -> bool {
 
-	keycodes, exists := actions[action]
+	data, exists := &actions[action]
 
 	if !exists {
 		err.report_error(err.Error{err.ErrorType.Runtime, "Action does not exist."})
+		fmt.println(action)
 		return false
 	}
 
-	for key in keycodes {
+	for key in &data.keys {
 		ray_key := rl.KeyboardKey(key)
 		if rl.IsKeyPressed(ray_key) {
 			return true
@@ -50,16 +82,37 @@ pressed :: proc(action: string) -> bool {
 	return false
 }
 
-held :: proc(action: string) -> bool {
+released :: proc(action : i32) -> bool {
 
-	keycodes, exists := actions[action]
+	data, exists := &actions[action]
 
 	if !exists {
 		err.report_error(err.Error{err.ErrorType.Runtime, "Action does not exist."})
+		fmt.println(action)
 		return false
 	}
 
-	for key in keycodes {
+	for key in &data.keys {
+		ray_key := rl.KeyboardKey(key)
+		if rl.IsKeyReleased(ray_key) {
+			return true
+		}
+	}
+
+	return false
+}
+
+held :: proc(action: i32) -> bool {
+
+	data, exists := &actions[action]
+
+	if !exists {
+		err.report_error(err.Error{err.ErrorType.Runtime, "Action does not exist."})
+		fmt.println(action)
+		return false
+	}
+
+	for key in &data.keys {
 
 		ray_key := rl.KeyboardKey(key)
 		if rl.IsKeyDown(ray_key) {
@@ -73,6 +126,15 @@ held :: proc(action: string) -> bool {
 contains :: proc(keys: [dynamic]i32, value: i32) -> bool {
 	for key in keys {
 		if key == value {
+			return true
+		}
+	}
+	return false
+}
+
+action_exists :: proc(cur_action : string) -> bool {
+	for index,action in actions{
+		if action.action_str == cur_action {
 			return true
 		}
 	}

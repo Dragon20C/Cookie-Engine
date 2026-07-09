@@ -79,6 +79,11 @@
 ---@class Input
 input = {}
 
+--- Creates an action to be used as a binding.
+---@param action string
+---@return string
+function input.create_action(action) end
+
 --- Binds an action to a key on the keyboard.
 ---@param action string
 ---@param key integer

@@ -110,7 +110,9 @@ register_inputs :: proc(L: ^lua.State) {
 	register_function(L, "bind", bind)
 	register_function(L, "unbind", unbind)
 	register_function(L, "pressed", pressed)
+	register_function(L, "released", released)
 	register_function(L, "held", held)
+	register_function(L, "create_action",create_action)
 	lua.setglobal(L, "input")
 
 }
@@ -120,15 +122,30 @@ register_key :: proc(L: ^lua.State, key_str: cstring, index: i32) {
 	lua.setfield(L, -2, key_str)
 }
 
+create_action :: proc "c"(L :^lua.State) -> i32 {
+
+	if !lua.isstring(L,1) {
+		return 0
+	}
+
+	context = runtime.default_context()
+	action := strings.clone_from_cstring(lua.tostring(L,1))
+	engine.create_action(action)
+
+	id := lua.Integer(engine.action_index - 1)
+	lua.pushinteger(L,id)
+	return 1
+}
+
 bind :: proc "c" (L: ^lua.State) -> i32 {
 
-	if !lua.isstring(L, 1) || !lua.isinteger(L, 2) {
+	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) {
 		return 0
 	}
 
 	context = runtime.default_context()
 
-	action := strings.clone_from_cstring(lua.tostring(L, 1))
+	action := i32(lua.tointeger(L, 1))
 	index := i32(lua.tointeger(L, 2))
 
 	engine.bind(action, index)
@@ -137,12 +154,12 @@ bind :: proc "c" (L: ^lua.State) -> i32 {
 }
 
 unbind :: proc "c" (L: ^lua.State) -> i32 {
-	if !lua.isstring(L, 1) || !lua.isinteger(L, 2) {
+	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) {
 		return 0
 	}
 	context = runtime.default_context()
 
-	action := strings.clone_from_cstring(lua.tostring(L, 1))
+	action := i32(lua.tointeger(L, 1))
 	index := i32(lua.tointeger(L, 2))
 
 	engine.unbind(action, index)
@@ -152,13 +169,26 @@ unbind :: proc "c" (L: ^lua.State) -> i32 {
 
 pressed :: proc "c" (L: ^lua.State) -> i32 {
 
-	if !lua.isstring(L, 1) {
+	if !lua.isinteger(L, 1) {
 		return 0
 	}
 	context = runtime.default_context()
-	action := strings.clone_from_cstring(lua.tostring(L, 1))
+	action := i32(lua.tointeger(L,1))
 
 	result := b32(engine.pressed(action))
+	lua.pushboolean(L, result)
+	return 1
+}
+
+released :: proc "c" (L: ^lua.State) -> i32 {
+
+	if !lua.isinteger(L, 1) {
+		return 0
+	}
+	context = runtime.default_context()
+	action := i32(lua.tointeger(L,1))
+
+	result := b32(engine.released(action))
 	lua.pushboolean(L, result)
 	return 1
 }
@@ -169,7 +199,7 @@ held :: proc "c" (L: ^lua.State) -> i32 {
 		return 0
 	}
 	context = runtime.default_context()
-	action := strings.clone_from_cstring(lua.tostring(L, 1))
+	action := i32(lua.tointeger(L, 1))
 
 	result := b32(engine.held(action))
 	lua.pushboolean(L, result)
