@@ -123,6 +123,33 @@ held :: proc(action: i32) -> bool {
 	return false
 }
 
+key_pressed :: proc(keycode : i32) -> bool {
+	if keycode < 0 && keycode > len(rl.KeyboardKey) {
+		return false
+	}
+
+	ray_key := rl.KeyboardKey(keycode)
+	return rl.IsKeyPressed(ray_key)
+}
+
+key_held :: proc(keycode : i32) -> bool {
+	if keycode < 0 && keycode > len(rl.KeyboardKey) {
+		return false
+	}
+
+	ray_key := rl.KeyboardKey(keycode)
+	return rl.IsKeyDown(ray_key)
+}
+
+key_released :: proc(keycode : i32) -> bool {
+	if keycode < 0 && keycode > len(rl.KeyboardKey) {
+		return false
+	}
+
+	ray_key := rl.KeyboardKey(keycode)
+	return rl.IsKeyReleased(ray_key)
+}
+
 contains :: proc(keys: [dynamic]i32, value: i32) -> bool {
 	for key in keys {
 		if key == value {
@@ -139,4 +166,18 @@ action_exists :: proc(cur_action : string) -> bool {
 		}
 	}
 	return false
+}
+
+get_keycodes :: proc(action : i32) -> [dynamic]i32{
+
+	keycodes := make([dynamic]i32)
+
+	data, exists := &actions[action]
+	if !exists {
+		err.report_error(err.Error{err.ErrorType.Runtime, "Action does not exist, create it first using input.create_action(action)"})
+		return keycodes
+	}
+	keycodes = data.keys
+
+	return keycodes
 }

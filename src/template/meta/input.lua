@@ -1,7 +1,7 @@
 ---@meta
 
 ---@class Input
---- -- Keyboard
+--- Keyboard
 ---@field KEY_A integer
 ---@field KEY_B integer
 ---@field KEY_C integer
@@ -71,7 +71,7 @@
 ---@field KEY_F10 integer
 ---@field KEY_F11 integer
 ---@field KEY_F12 integer
---- mouse
+--- Mouse
 ---@field MOUSE_LEFT integer
 ---@field MOUSE_RIGHT integer
 ---@field MOUSE_MIDDLE integer
@@ -81,30 +81,50 @@ input = {}
 
 --- Creates an action to be used as a binding.
 ---@param action string
----@return string
+---@return integer
 function input.create_action(action) end
 
+---Returns all avaliable keycodes associated with the action.
+---@param action integer
+---@return table
+function input.get_keycodes(action) end
+
 --- Binds an action to a key on the keyboard.
----@param action string
+---@param action integer
 ---@param key integer
 function input.bind(action, key) end
 
 --- Unbinds an action from a key.
----@param action string
+---@param action integer
 ---@param key integer
 function input.unbind(action, key) end
 
 --- Checks if an action has been pressed.
----@param action string
+---@param action integer
 ---@return boolean
 function input.pressed(action) end
 
 --- Checks if an action has been released.
----@param action string
+---@param action integer
 ---@return boolean
 function input.released(action) end
 
 --- Checks if an action is being held down.
----@param action string
+---@param action integer
 ---@return boolean
 function input.held(action) end
+
+--- Checks if an action has been pressed.
+---@param key_code integer
+---@return boolean
+function input.key_pressed(key_code) end
+
+--- Checks if an action has been released.
+---@param key_code integer
+---@return boolean
+function input.key_released(key_code) end
+
+--- Checks if an action is being held down.
+---@param key_code integer
+---@return boolean
+function input.key_held(key_code) end

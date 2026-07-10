@@ -1,5 +1,6 @@
 package bindings
 // Input script.
+import "core:fmt"
 
 import engine "../../engine"
 import "base:runtime"
@@ -112,7 +113,11 @@ register_inputs :: proc(L: ^lua.State) {
 	register_function(L, "pressed", pressed)
 	register_function(L, "released", released)
 	register_function(L, "held", held)
+	register_function(L, "key_pressed", key_pressed)
+	register_function(L, "key_released", key_released)
+	register_function(L, "key_held", key_held)
 	register_function(L, "create_action",create_action)
+	register_function(L, "get_keycodes",get_keycodes)
 	lua.setglobal(L, "input")
 
 }
@@ -120,6 +125,26 @@ register_inputs :: proc(L: ^lua.State) {
 register_key :: proc(L: ^lua.State, key_str: cstring, index: i32) {
 	lua.pushinteger(L, lua.Integer(index))
 	lua.setfield(L, -2, key_str)
+}
+
+get_keycodes :: proc "c"(L : ^lua.State) -> i32 {
+
+	if !lua.isinteger(L,1){
+		return 0
+	}
+
+	action := i32(lua.tointeger(L,1))
+	context = runtime.default_context()
+	keycodes := engine.get_keycodes(action)
+	lua.createtable(L, i32(len(keycodes)), 0)
+
+
+	for key, i in keycodes {
+	    lua.pushinteger(L, lua.Integer(key))
+	    lua.rawseti(L, -2, lua.Integer(i + 1)) // Lua arrays are 1-based
+	}
+
+	return 1
 }
 
 create_action :: proc "c"(L :^lua.State) -> i32 {
@@ -203,5 +228,41 @@ held :: proc "c" (L: ^lua.State) -> i32 {
 
 	result := b32(engine.held(action))
 	lua.pushboolean(L, result)
+	return 1
+}
+
+key_pressed :: proc "c" (L : ^lua.State) -> i32 {
+	if !lua.isinteger(L,1) {
+		return 0
+	}
+
+	key_code : i32 = i32(lua.tointeger(L,1))
+	context = runtime.default_context()
+	result := b32(engine.key_pressed(key_code))
+	lua.pushboolean(L,result)
+	return 1
+}
+
+key_held :: proc "c" (L : ^lua.State) -> i32 {
+	if !lua.isinteger(L,1) {
+		return 0
+	}
+
+	key_code : i32 = i32(lua.tointeger(L,1))
+	context = runtime.default_context()
+	result := b32(engine.key_held(key_code))
+	lua.pushboolean(L,result)
+	return 1
+}
+
+key_released :: proc "c" (L : ^lua.State) -> i32 {
+	if !lua.isinteger(L,1) {
+		return 0
+	}
+
+	key_code : i32 = i32(lua.tointeger(L,1))
+	context = runtime.default_context()
+	result := b32(engine.key_released(key_code))
+	lua.pushboolean(L,result)
 	return 1
 }

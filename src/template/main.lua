@@ -5,18 +5,27 @@ local chicken = {
 	y = 0
 }
 Actions = {}
---- Change this from using string to an integer for performance.
+-- Here I assign the input maps into an action table, but its not required.
 Actions.Left = input.create_action("Left")
 Actions.Right = input.create_action("Right")
 Actions.Up = input.create_action("Up")
 Actions.Down = input.create_action("Down")
 
 function _init()
-	cookie.scale_window(2)
+    cookie.scale_window(2)
+	-- Bind an action to a keycode, Note you can bind multiple keycodes even controllers when I add support for it...
 	input.bind(Actions.Right, input.KEY_D)
 	input.bind(Actions.Left, input.KEY_A)
-	input.bind(Actions.Up, input.KEY_W)
-	input.bind(Actions.Down, input.KEY_S)
+    input.bind(Actions.Up, input.KEY_W)
+    input.bind(Actions.Down, input.KEY_S)
+
+    -- easy way of getting the keycodes without needing to store an extra table.
+    local keys = input.get_keycodes(Actions.Up)
+
+    -- You can unbind all the key codes from an action this way.
+    for _, key in ipairs(keys) do
+    input.unbind(Actions.Up, key)
+    end
 end
 
 function _update(dt)
@@ -33,9 +42,10 @@ function _update(dt)
         chicken.y = chicken.y + 100 * dt
     end
 
-    if input.released(Actions.Right) then
-	print("Release the demons!")
+    if input.key_held(input.KEY_W) then
+   	chicken.y = chicken.y - 100 * dt
     end
+
 end
 
 function _draw()
