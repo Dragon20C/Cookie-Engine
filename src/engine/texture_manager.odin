@@ -140,3 +140,11 @@ scale_window :: proc(scale: i32) {
 
 	rl.SetWindowPosition(x, y)
 }
+
+fullscreen_game :: proc(state : bool){
+	already := rl.IsWindowFullscreen()
+
+	if already != state{
+		rl.ToggleFullscreen()
+	}
+}

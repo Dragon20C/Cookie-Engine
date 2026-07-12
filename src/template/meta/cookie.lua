@@ -36,3 +36,6 @@ function cookie.FPS() end
 --- --- Scales the window by the specified multiplier.
 --- @param multiplier number The multiplier to scale the window by.
 function cookie.scale_window(multiplier) end
+
+--- @param enable  boolean
+function cookie.set_fullscreen(enable) end

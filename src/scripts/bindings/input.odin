@@ -128,7 +128,6 @@ register_key :: proc(L: ^lua.State, key_str: cstring, index: i32) {
 }
 
 get_keycodes :: proc "c"(L : ^lua.State) -> i32 {
-
 	if !lua.isinteger(L,1){
 		return 0
 	}

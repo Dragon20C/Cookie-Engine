@@ -29,9 +29,22 @@ register_cookie :: proc(L: ^lua.State) {
 
 	register_function(L, "FPS", get_fps)
 	register_function(L, "scale_window", scale_window)
+	register_function(L, "set_fullscreen", set_fullscreen)
 
 	lua.setglobal(L, "cookie")
 
+}
+
+set_fullscreen :: proc "c"(L : ^lua.State) -> i32{
+	if !lua.isboolean(L,1){
+		return 0
+	}
+
+	fullscreen_state := bool(lua.toboolean(L,1))
+	context = runtime.default_context()
+	engine.fullscreen_game(fullscreen_state)
+
+	return 0
 }
 
 scale_window :: proc "c" (L: ^lua.State) -> i32 {
