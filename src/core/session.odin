@@ -6,6 +6,7 @@ import conf "../config"
 import engine "../engine"
 import err "../error"
 import bindings "../scripts/bindings"
+import reloader "../reloader"
 import "core:fmt"
 import "core:strings"
 import lua "vendor:lua/5.4"
@@ -15,6 +16,7 @@ L: ^lua.State
 
 start_session :: proc() {
 	err.on_fatal_error = close_session
+	reloader.reload = reload_engine
 
 	title: cstring = strings.clone_to_cstring(conf.Config.title)
 	width: i32 = i32(conf.Config.game_width)
@@ -44,6 +46,7 @@ session :: proc() {
 	// Order of execution, init(Once) -> update -> draw
 	init()
 	for !rl.WindowShouldClose() {
+		reloader.checker()
 		bindings.update_elapsed_time(L)
 		window_scale := calculate_scale(width, height)
 		mouse_position := calculate_virtual_mouse(width, height, window_scale)
@@ -100,6 +103,11 @@ draw :: proc(dt: f32) {
 }
 
 start_lua_vm :: proc() {
+
+	if L != nil {
+        lua.close(L)
+    }
+
 	L = lua.L_newstate()
 	lua.L_openlibs(L)
 
@@ -112,6 +120,14 @@ start_lua_vm :: proc() {
 	if lua_loaded != 0 {
 		err.report_error(err.Error{err.ErrorType.Fatal, "Failed to load main.lua."})
 	}
+}
+
+reload_engine :: proc() {
+	fmt.println("Reloading project.")
+	engine.clear_textures()
+	engine.clear_actions()
+    start_lua_vm()
+    init()
 }
 
 calculate_scale :: proc(width: i32, height: i32) -> f32 {

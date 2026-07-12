@@ -181,3 +181,8 @@ get_keycodes :: proc(action : i32) -> [dynamic]i32{
 
 	return keycodes
 }
+
+clear_actions :: proc() {
+	actions = make(map[i32]action_data)
+	action_index = 0
+}

@@ -148,3 +148,7 @@ fullscreen_game :: proc(state : bool){
 		rl.ToggleFullscreen()
 	}
 }
+
+clear_textures :: proc() {
+	sheets = make(map[i32]sheet_texture)
+}

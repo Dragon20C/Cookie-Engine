@@ -20,15 +20,9 @@ function _init()
     input.bind(Actions.Up, input.KEY_W)
     input.bind(Actions.Down, input.KEY_S)
 
-    cookie.set_fullscreen(true)
-
     -- easy way of getting the keycodes without needing to store an extra table.
     local keys = input.get_keycodes(Actions.Up)
 
-    -- You can unbind all the key codes from an action this way.
-    for _, key in ipairs(keys) do
-        input.unbind(Actions.Up, key)
-    end
 
     chicken.x = (cookie.WIDTH / 2) - (chicken.size / 2)
     chicken.y = (cookie.HEIGHT / 2) - (chicken.size / 2)
@@ -49,13 +43,10 @@ function _update(dt)
         chicken.y = chicken.y + 100 * dt
     end
 
-    if input.key_held(input.KEY_W) then
-        chicken.y = chicken.y - 100 * dt
-    end
+    -- if input.key_held(input.KEY_W) then
+    --     chicken.y = chicken.y - 100 * dt
+    -- end
 
-    if input.key_pressed(input.KEY_SPACE) then
-    	cookie.set_fullscreen(false)
-    end
 
 end
 
