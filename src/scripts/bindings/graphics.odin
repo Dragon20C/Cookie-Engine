@@ -145,12 +145,20 @@ sprite :: proc "c" (L: ^lua.State) -> i32 {
 	if !lua.isinteger(L, 1) || !lua.isinteger(L, 2) || !lua.isnumber(L, 3) || !lua.isnumber(L, 4) {
 		return 0
 	}
+
+	flipped :b32 = false
+
+	if lua.gettop(L) >= 5 && lua.isboolean(L,5) {
+		flipped = lua.toboolean(L,5)
+	}
+
 	context = runtime.default_context()
 	engine.draw_sprite(
 		i32(lua.tointeger(L, 1)),
 		i32(lua.tointeger(L, 2)),
 		i32(lua.tonumber(L, 3)),
 		i32(lua.tonumber(L, 4)),
+		flipped
 	)
 	return 0
 }
