@@ -31,6 +31,7 @@ start_session :: proc() {
 	engine.load_project_icon()
 	engine.setup_color_palette()
 	engine.create_frame_buffer()
+	engine.init_audio_device()
 
 	start_lua_vm()
 
@@ -48,6 +49,7 @@ session :: proc() {
 	for !rl.WindowShouldClose() {
 		reloader.checker()
 		bindings.update_elapsed_time(L)
+
 		window_scale := calculate_scale(width, height)
 		mouse_position := calculate_virtual_mouse(width, height, window_scale)
 		delta_time: f32 = rl.GetFrameTime()
@@ -125,6 +127,7 @@ start_lua_vm :: proc() {
 reload_engine :: proc() {
 	fmt.println("Reloading project.")
 	engine.clear_textures()
+	engine.clear_audio_state()
 	engine.clear_actions()
     start_lua_vm()
     init()

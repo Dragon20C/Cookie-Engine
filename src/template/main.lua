@@ -5,24 +5,16 @@ local chicken = {
     y = 0,
 	size = 16
 }
-Actions = {}
--- Here I assign the input maps into an action table, but its not required.
-Actions.Left = input.create_action("Left")
-Actions.Right = input.create_action("Right")
-Actions.Up = input.create_action("Up")
-Actions.Down = input.create_action("Down")
+
+local index = 0
+
+local sounds = {}
+sounds.hurt = sfx.load("sfx/hitHurt.wav")
+sounds.jump = sfx.load("sfx/jump.wav")
+sounds.coin = sfx.load("sfx/pickupCoin.wav")
 
 function _init()
     cookie.scale_window(2)
-	-- Bind an action to a keycode, Note you can bind multiple keycodes even controllers when I add support for it...
-	input.bind(Actions.Right, input.KEY_D)
-	input.bind(Actions.Left, input.KEY_A)
-    input.bind(Actions.Up, input.KEY_W)
-    input.bind(Actions.Down, input.KEY_S)
-
-    -- easy way of getting the keycodes without needing to store an extra table.
-    local keys = input.get_keycodes(Actions.Up)
-
 
     chicken.x = (cookie.WIDTH / 2) - (chicken.size / 2)
     chicken.y = (cookie.HEIGHT / 2) - (chicken.size / 2)
@@ -30,22 +22,11 @@ function _init()
 end
 
 function _update(dt)
-	if input.held(Actions.Right) then
-		chicken.x = chicken.x + 100 * dt
-	end
-	if input.held(Actions.Left) then
-		chicken.x = chicken.x - 100 * dt
-	end
-	if input.held(Actions.Up) then
-		chicken.y = chicken.y - 100 * dt
-	end
-    if input.held(Actions.Down) then
-        chicken.y = chicken.y + 100 * dt
-    end
 
-    -- if input.key_held(input.KEY_W) then
-    --     chicken.y = chicken.y - 100 * dt
-    -- end
+    if input.key_pressed(input.KEY_SPACE) then
+        index = (index + 1) % 3
+        sfx.play(index)
+    end
 
 
 end

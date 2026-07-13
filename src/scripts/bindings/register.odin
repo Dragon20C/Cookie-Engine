@@ -7,6 +7,7 @@ register_bindings :: proc(L: ^lua.State) {
 	register_cookie(L)
 	register_graphics(L)
 	register_inputs(L)
+	register_audio(L)
 
 }
 
