@@ -1,12 +1,12 @@
 package session
 // Session script.
-import "core:path/filepath"
 
 import conf "../config"
 import engine "../engine"
 import err "../error"
 import bindings "../scripts/bindings"
 import reloader "../reloader"
+import module_loader "../scripts/modules"
 import "core:fmt"
 import "core:strings"
 import lua "vendor:lua/5.4"
@@ -114,6 +114,7 @@ start_lua_vm :: proc() {
 	lua.L_openlibs(L)
 
 	bindings.register_bindings(L)
+	module_loader.load_modules(L)
 
 	lua_main := conf.get_main_lua_file()
 	fmt.println(lua_main)

@@ -15,9 +15,11 @@ sounds.coin = sfx.load("sfx/pickupCoin.wav")
 
 function _init()
     cookie.scale_window(2)
-
     chicken.x = (cookie.WIDTH / 2) - (chicken.size / 2)
     chicken.y = (cookie.HEIGHT / 2) - (chicken.size / 2)
+
+    local val = utils.approximately(1,1.01, 0.1)
+    print(val)
 
 end
 
