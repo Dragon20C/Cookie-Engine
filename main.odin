@@ -3,11 +3,26 @@ package main
 import "core:fmt"
 import "core:os"
 import "core:strings"
+import si "core:sys/info"
 import cli "src/cli"
+import conf "src/config"
 
 main :: proc() {
 	// Read the command line arguments.
 	args := os.args[1:]
+
+
+
+	if len(args) == 0 {
+		fmt.println("Command not found.")
+		fmt.println("Usage: cookie new game_title game_dir")
+		fmt.println("Usage: cookie dev game_dir")
+		fmt.println("Usage: cookie run game_dir")
+		fmt.println("Usage: cookie version")
+		return
+	}
+
+	set_os_type()
 
 	command_args := strings.to_lower(args[0])
 
@@ -45,3 +60,24 @@ read_version :: proc() -> string {
 
 		return text
 	}
+
+set_os_type :: proc() {
+	if version, version_ok := si.os_version(context.allocator); version_ok {
+		defer si.destroy_os_version(version, context.allocator)
+
+		#partial switch version.platform {
+		case si.OS_Version_Platform.Windows:
+			conf.Config.platform = conf.Platform.WINDOWS
+
+		case si.OS_Version_Platform.Linux:
+			conf.Config.platform = conf.Platform.LINUX
+
+		case si.OS_Version_Platform.MacOS:
+			conf.Config.platform = conf.Platform.MAC_OS
+
+		case:
+			conf.Config.platform = conf.Platform.UNKNOWN
+
+		}
+	}
+}

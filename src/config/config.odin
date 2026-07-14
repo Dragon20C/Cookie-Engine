@@ -9,7 +9,16 @@ import "core:path/filepath"
 import "core:strings"
 import lua "vendor:lua/5.4"
 
+Platform :: enum {
+	LINUX,
+	WINDOWS,
+	MAC_OS,
+	UNKNOWN
+}
+
 Configuration :: struct {
+	platform   : Platform,
+	engine_dir : string,
 	project_dir: string,
 	title:       string,
 	id:          string,
@@ -20,6 +29,8 @@ Configuration :: struct {
 }
 
 Config := Configuration {
+	platform    = Platform.UNKNOWN,
+	engine_dir  = "",
 	project_dir = "",
 	title       = "Cookie Engine Game",
 	id          = "com.cookieengine.game",
