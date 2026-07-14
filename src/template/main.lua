@@ -13,11 +13,12 @@ end
 
 function _update(dt)
     if input.key_held(input.KEY_A) then
-		flip = true
-
+        flip = true
     elseif input.key_held(input.KEY_D) then
-		flip = false
-	end
+        flip = false
+    end
+    local mx, my = input.mouse_position()
+    print("x : " .. mx .." y : " .. my)
 end
 
 function _draw()

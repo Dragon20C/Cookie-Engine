@@ -14,6 +14,8 @@ action_data :: struct {
 // Actions can hold multiple keys which is stored as an array of i32s
 actions: map[i32]action_data
 action_index : i32 = 0
+mouse_x, mouse_y : f32= 0.0,0.0
+
 
 create_action :: proc(action : string) {
 	if action_exists(action) {
@@ -185,4 +187,9 @@ get_keycodes :: proc(action : i32) -> [dynamic]i32{
 clear_actions :: proc() {
 	actions = make(map[i32]action_data)
 	action_index = 0
+}
+
+mouse_position :: proc() -> (f32,f32){
+
+	return mouse_x, mouse_y
 }

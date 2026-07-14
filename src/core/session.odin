@@ -52,6 +52,7 @@ session :: proc() {
 
 		window_scale := calculate_scale(width, height)
 		mouse_position := calculate_virtual_mouse(width, height, window_scale)
+		engine.mouse_x, engine.mouse_y = mouse_position[0],mouse_position[1]
 		delta_time: f32 = rl.GetFrameTime()
 
 		update(delta_time)
