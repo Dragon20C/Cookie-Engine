@@ -15,7 +15,7 @@ main() {
 	        echo ""
 	        echo "# Cookie Engine"
 	        echo 'export COOKIE_ENGINE_ROOT="$HOME/CookieEngine"'
-	        echo 'export PATH="$PATH:$COOKIE_ENGINE_ROOT/"'
+	        echo 'export PATH="$COOKIE_ENGINE_ROOT:$PATH"'
 	    } >> "$bashrc"
 
 	    echo "Added Cookie Engine to ~/.bashrc"
@@ -29,12 +29,33 @@ main() {
 	echo ""
 
 	if [[ -d "$engine_root" ]]; then
-			echo "CookieEngine already exists at $engine_root"
-			question_removal_of_dir
+		echo "CookieEngine already exists at $engine_root"
+		question_removal_of_dir
 	else
-			mkdir "$engine_root"
-			echo "Created $engine_root"
+		setup_latest_engine
 	fi
+
+	read -r version < "$COOKIE_ENGINE_ROOT/version.txt"
+
+	echo "Currently installed ($version)"
+
+}
+
+setup_latest_engine(){
+	tmp_dir=$(mktemp -d)
+
+	curl -L \
+	    -o "$tmp_dir/CookieEngine-linux.tar.gz" \
+	    "https://github.com/Dragon20C/Cookie-Engine/releases/latest/download/CookieEngine-linux.tar.gz"
+
+	tar -xzf "$tmp_dir/CookieEngine-linux.tar.gz" -C "$tmp_dir"
+
+	rm -rf "$HOME/CookieEngine"
+	mv "$tmp_dir/CookieEngine" "$HOME/"
+
+	echo "Successfully installed Cookie engine."
+
+	rm -rf "$tmp_dir"
 
 }
 

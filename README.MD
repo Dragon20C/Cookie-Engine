@@ -11,11 +11,24 @@ Cookie engine is a 2D game engine perfect for making pixel art games using lua 5
 
 Currently Cookie Engine requires you build the project, in the future there is plans on making it easier to install but for now the only option is to build the project.
 
-**Requirements**
+## Installation (Linux)
 
- 1. Odin -> Dev 2026-05 https://github.com/odin-lang/Odin/releases **Note :** havent tested newer versions
- 2. Lua -> 5.4 **Note :** Newer versions might work but Cookie engine is targeted at 5.4 so avoid using newer vers
- 3. IDE -> I recommend using **Zed Editor** as it gives you loads of functionality and its really easy to use
+Download the installer:
+
+```sh
+curl -LO https://raw.githubusercontent.com/Dragon20C/Cookie-Engine/main/installers/installer.sh
+chmod +x installer.sh
+./installer.sh
+```
+
+The installer will:
+
+- Download the latest Cookie Engine release.
+- Install it to `~/CookieEngine`.
+- Add `COOKIE_ENGINE_ROOT` to your `~/.bashrc`.
+- Add Cookie Engine to your `PATH`.
+
+Note: the installer script exists in this repo in installers directory.
 
 **Instructions**
 In a terminal do all of these actions.
