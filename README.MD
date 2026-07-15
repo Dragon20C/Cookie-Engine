@@ -11,12 +11,12 @@ Cookie engine is a 2D game engine perfect for making pixel art games using lua 5
 
 Currently Cookie Engine requires you build the project, in the future there is plans on making it easier to install but for now the only option is to build the project.
 
-## Installation (Linux)
+## Installation (Linux/MacOS)
 
 Download the installer:
 
 ```sh
-curl -LO https://raw.githubusercontent.com/Dragon20C/Cookie-Engine/main/installers/installer.sh
+curl -LO https://raw.githubusercontent.com/Dragon20C/Cookie-Engine/main/installers/install.sh
 chmod +x installer.sh
 ./installer.sh
 ```
@@ -29,6 +29,9 @@ The installer will:
 - Add Cookie Engine to your `PATH`.
 
 Note: the installer script exists in this repo in installers directory.
+
+(Windows)
+umm sorry, I have not made one yet...
 
 **Instructions**
 In a terminal do all of these actions.

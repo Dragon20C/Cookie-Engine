@@ -10,6 +10,7 @@ import err "../../error"
 
 load_modules :: proc(L : ^lua.State) {
 	load_module(L, "utils.lua", "utils")
+	load_module(L, "rect.lua", "rect")
 }
 
 load_module :: proc(L : ^lua.State, module_title : string, title: cstring) {
