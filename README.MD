@@ -17,8 +17,8 @@ Download the installer:
 
 ```sh
 curl -LO https://raw.githubusercontent.com/Dragon20C/Cookie-Engine/main/installers/install.sh
-chmod +x installer.sh
-./installer.sh
+chmod +x install.sh
+./install.sh
 ```
 
 The installer will:
