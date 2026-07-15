@@ -7,13 +7,13 @@ Cookie engine is a 2D game engine perfect for making pixel art games using lua 5
 
 <p align="center"> This project is licensed under the GNU GPL v3.0. See the LICENSE file for details. </p>
 
-# Building
+## Installation
 
-Currently Cookie Engine requires you build the project, in the future there is plans on making it easier to install but for now the only option is to build the project.
+Note: the install scripts exists in this repo in installers directory.
 
-## Installation (Linux/MacOS)
+## (Linux/MacOS)
 
-Download the installer:
+Downloading the install script, run these commands in your terminal:
 
 ```sh
 curl -LO https://raw.githubusercontent.com/Dragon20C/Cookie-Engine/main/installers/install.sh
@@ -28,41 +28,44 @@ The installer will:
 - Add `COOKIE_ENGINE_ROOT` to your `~/.bashrc`.
 - Add Cookie Engine to your `PATH`.
 
-Note: the installer script exists in this repo in installers directory.
 
-(Windows)
+
+## (Windows)
 umm sorry, I have not made one yet...
 
-**Instructions**
-In a terminal do all of these actions.
-Git clone the repo -> https://github.com/Dragon20C/Cookie-Engine
+**Cookie Usage**
+Commands
+- **new**
+ 
+`cookie new cool_game desired/path`
 
-    Git clone https://github.com/Dragon20C/Cookie-Engine
-Change directory into cookie engine.
+creates a new project, path is optional it will create it in the current dir.
 
-    cd Cookie-Engine
-Build the project with odin.
 
-    odin build . -out:cookie
+- **run**
 
-Running the executable.
+runs the project with debug mode off, cookie.IS_DEV is false.
 
-    ./cookie
 
-Running just cookie prints the available commands.
+`cookie run desired/path`
+- **dev**
 
-    new, run, dev, export
+When developing a game dev mode allows you to debug using cookie.IS_DEV which becomes true.
 
- - `./cookie new game_title /desired/game/path` 
-**Note :** if path is not provided it creates it at the root of the terminal, also I recommend making the project out of the cookie-engine folder because it can mess up lua language server stuff, do ../ to the path make the project be outside of this folder.
-- `./cookie run ./desired/game/path`
-**Note :** In the future you would be able to just use ./cookie run but the way I structured the engine requires it go to a specific path.
-- `./cookie dev ./desired/game/path`
-**Note :** Similar to run except it runs the game in dev mode, dev mode is a simple tool for debugging your games
-usage is simply doing cookie.IS_DEV in your lua files, this becomes true if cookie is using dev mode.
-- `./cookie export ./desired/game/path`
-**Note :** This currently does nothing, so there is no current way to export the project to any systems.
 
+`cookie dev desired/path`
+- **export**
+
+`cookie export desired/path`
+
+exports the project to the avaliable oses e.g Linux, Windows, MacOS.
+
+
+- **version**
+
+`cookie version`
+
+prints the currently installed version of cookie.
 
 
 ## GFX usage
