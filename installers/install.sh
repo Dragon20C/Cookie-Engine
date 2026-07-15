@@ -13,7 +13,7 @@ LINUX_ARCHIVE="CookieEngine-linux.tar.gz"
 MACOS_ARCHIVE="CookieEngine-macos.tar.gz"
 
 ENGINE_ROOT="$HOME/$ENGINE_NAME"
-BASHRC="$HOME/.bashrc"
+SHELL_RC="$HOME/.bashrc"
 
 ########################################
 # Globals
@@ -100,18 +100,34 @@ detect_platform() {
 # Bashrc
 ########################################
 
+detect_shell() {
+	case "$(basename "$SHELL")" in
+    bash)
+        SHELL_RC="$HOME/.bashrc"
+        ;;
+
+    zsh)
+        SHELL_RC="$HOME/.zshrc"
+        ;;
+
+    *)
+        SHELL_RC="$HOME/.profile"
+        ;;
+esac
+}
+
 setup_environment() {
 
-    if ! grep -q "^export COOKIE_ENGINE_ROOT=" "$BASHRC"; then
+    if ! grep -q "^export COOKIE_ENGINE_ROOT=" "$SHELL_RC"; then
 
         {
             echo ""
             echo "# Cookie Engine"
             echo 'export COOKIE_ENGINE_ROOT="$HOME/CookieEngine"'
             echo 'export PATH="$COOKIE_ENGINE_ROOT:$PATH"'
-        } >> "$BASHRC"
+        } >> "$SHELL_RC"
 
-        success "Added COOKIE_ENGINE_ROOT to ~/.bashrc"
+        success "Added COOKIE_ENGINE_ROOT to ~/$SHELL_RC"
 
     else
         info "COOKIE_ENGINE_ROOT already exists."
@@ -226,6 +242,8 @@ main() {
 
     detect_platform
 
+    detect_shell
+
     download_release
 
     get_downloaded_version
@@ -257,7 +275,7 @@ main() {
     echo ""
     echo "Restart your terminal or run:"
     echo ""
-    echo "    source ~/.bashrc"
+    echo "    source ~/$SHELL_RC"
     echo ""
 }
 
