@@ -1,6 +1,7 @@
 package config
 // Config script.
 
+import si "core:sys/info"
 import err "../error"
 import "base:runtime"
 import "core:fmt"
@@ -208,8 +209,78 @@ get_main_lua_file :: proc() -> cstring {
 	}
 }
 
+set_platform:: proc(){
+	set_os_type()
+	set_engine_root()
+}
+
+set_os_type :: proc() {
+	if version, version_ok := si.os_version(context.allocator); version_ok {
+		defer si.destroy_os_version(version, context.allocator)
+
+		#partial switch version.platform {
+		case si.OS_Version_Platform.Windows:
+			Config.platform = Platform.WINDOWS
+
+		case si.OS_Version_Platform.Linux:
+			Config.platform = Platform.LINUX
+
+		case si.OS_Version_Platform.MacOS:
+			Config.platform = Platform.MAC_OS
+
+		case:
+			Config.platform = Platform.UNKNOWN
+
+		}
+	}
+}
+
+set_engine_root :: proc(){
+	switch Config.platform{
+	case Platform.LINUX:
+		result := os.get_env_alloc("COOKIE_ENGINE_ROOT",runtime.default_allocator())
+		if result == ""{
+			err.report_error(err.Error{err.ErrorType.Fatal,"Getting COOKIE_ENGINE_ROOT failed, did you install it correctly?"})
+			return
+		}
+		Config.engine_dir = result
+
+	case Platform.WINDOWS:
+		err.report_error(err.Error{err.ErrorType.Fatal,"Sorry, not ready yet..."})
+	case Platform.MAC_OS:
+		err.report_error(err.Error{err.ErrorType.Fatal,"Sorry, not ready yet..."})
+	case Platform.UNKNOWN:
+		err.report_error(err.Error{err.ErrorType.Fatal,"Unknown platform found, sorry we dont support it or its not set correctly."})
+	}
+}
+
+read_version :: proc() -> string {
+	text_file , join_err := filepath.join({Config.engine_dir,"version.txt"})
+
+	if join_err != .None{
+		fmt.println("Failed to join engine dir to version.txt")
+		return "NONE"
+	}
+
+	data, ok := os.read_entire_file(text_file, context.temp_allocator)
+	if ok != .NONE {
+		return "Failed to read the version text..."
+	}
+
+	text := string(data)
+
+	if i := strings.index_byte(text, '\n'); i >= 0 {
+		return text[:i]
+	}
+
+		return text
+	}
+
+
 print_configuration :: proc() {
-	fmt.println("Path :", Config.project_dir)
+	fmt.println("Platform :", Config.platform)
+	fmt.println("Engine :", Config.engine_dir)
+	fmt.println("Project Path :", Config.project_dir)
 	fmt.println("Title :", Config.title)
 	fmt.println("Game ID :", Config.id)
 	fmt.println("Dev Mode :", Config.is_dev)

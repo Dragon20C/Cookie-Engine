@@ -1,13 +1,12 @@
 package module_loader
 
 import lua "vendor:lua/5.4"
+import conf "../../config"
 import "core:fmt"
 import "core:strings"
 import "core:path/filepath"
 import "core:os"
 import err "../../error"
-
-modules_path: string = "./src/scripts/modules"
 
 load_modules :: proc(L : ^lua.State) {
 	load_module(L, "utils.lua", "utils")
@@ -17,7 +16,7 @@ load_module :: proc(L : ^lua.State, module_title : string, title: cstring) {
 	ok, path := lua_file_exists(module_title)
 
 	if !ok {
-		fmt.println("Failed to find ", module_title, " in tools directory.")
+		fmt.println("Failed to find ", module_title, " in modules directory.")
 		return
 	}
 
@@ -44,7 +43,7 @@ load_module :: proc(L : ^lua.State, module_title : string, title: cstring) {
 }
 
 lua_file_exists :: proc(title: string) -> (b32, string) {
-	path, err := filepath.join({modules_path, title})
+	path, err := filepath.join({ conf.Config.engine_dir, "modules", title})
 	if err != nil {
 		return false, ""
 	}
