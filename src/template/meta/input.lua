@@ -79,6 +79,10 @@
 ---@class Input
 input = {}
 
+---@return number x
+--- @return number y
+function input.mouse_position() end
+
 --- Creates an action to be used as a binding.
 ---@param action string
 ---@return integer

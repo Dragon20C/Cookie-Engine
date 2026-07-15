@@ -108,6 +108,7 @@ register_inputs :: proc(L: ^lua.State) {
 		register_key(L, constant.name, constant.value)
 	}
 
+	register_function(L,"mouse_position",mouse_position)
 	register_function(L, "bind", bind)
 	register_function(L, "unbind", unbind)
 	register_function(L, "pressed", pressed)
@@ -144,6 +145,15 @@ get_keycodes :: proc "c"(L : ^lua.State) -> i32 {
 	}
 
 	return 1
+}
+
+mouse_position :: proc "c"(L : ^lua.State) -> i32 {
+	context = runtime.default_context()
+	x,y : f32 = engine.mouse_position()
+
+	lua.pushnumber(L,lua.Number(x))
+	lua.pushnumber(L,lua.Number(y))
+	return 2
 }
 
 create_action :: proc "c"(L :^lua.State) -> i32 {

@@ -1,12 +1,11 @@
 package cli
 
 import err "../error"
+import conf "../config"
 import "base:runtime"
 import fmt "core:fmt"
 import "core:os"
 import "core:path/filepath"
-
-template_dir :: "src/template"
 
 create_project :: proc(args: []string) {
 	if len(args) < 2 {
@@ -67,6 +66,13 @@ create_project :: proc(args: []string) {
 		fmt.println(
 			"Project directory already exists, either delete that one or choose a different name.",
 		)
+		return
+	}
+
+	template_dir ,t_join_err := filepath.join({conf.Config.engine_dir,"/template"})
+
+	if t_join_err != .None{
+		fmt.println("Failed to join engine dir to template dir. err:", t_join_err)
 		return
 	}
 

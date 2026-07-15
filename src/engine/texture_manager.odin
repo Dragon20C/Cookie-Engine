@@ -101,7 +101,7 @@ unload_sheet :: proc(sheet_id: i32) {
 	}
 }
 
-draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: i32, y: i32) {
+draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: i32, y: i32, flipped : b32) {
 	context = runtime.default_context()
 
 	if !(sheet_id in sheets) {
@@ -115,6 +115,11 @@ draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: i32, y: i32) {
 	cell_y := f32((frame_id / sheet.cols) * i32(sheet.cell_height))
 
 	rect := rl.Rectangle{cell_x, cell_y, f32(sheet.cell_width), f32(sheet.cell_height)}
+
+	if flipped {
+		rect.width = -rect.width
+	}
+
 	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{f32(x), f32(y)}, rl.WHITE)
 }
 
