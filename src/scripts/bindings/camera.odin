@@ -11,7 +11,7 @@ register_camera :: proc(L : ^lua.State){
 
 	register_function(L,"start",start)
 	register_function(L,"stop",stop)
-	register_function(L,"translate",translate)
+	register_function(L,"position",position)
 	register_function(L,"offset", offset)
 	register_function(L,"scale",scale)
 	register_function(L,"rotate",rotate)
@@ -48,7 +48,7 @@ offset :: proc"c"(L :^lua.State) -> i32 {
 	return 0
 }
 
-translate :: proc"c"(L :^lua.State) -> i32{
+position :: proc"c"(L :^lua.State) -> i32{
 
 	if !lua.isnumber(L, 1) || !lua.isnumber(L,2) {
 		return 0
@@ -58,7 +58,7 @@ translate :: proc"c"(L :^lua.State) -> i32{
 	y := f32(lua.tonumber(L,2))
 
 	context = runtime.default_context()
-	engine.translate_camera(x,y)
+	engine.position_camera(x,y)
 
 	return 0
 }

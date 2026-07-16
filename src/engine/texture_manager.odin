@@ -101,7 +101,7 @@ unload_sheet :: proc(sheet_id: i32) {
 	}
 }
 
-draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: i32, y: i32, flipped : b32) {
+draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: f32, y: f32, flipped : b32) {
 	context = runtime.default_context()
 
 	if !(sheet_id in sheets) {
@@ -120,7 +120,7 @@ draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: i32, y: i32, flipped : b32)
 		rect.width = -rect.width
 	}
 
-	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{f32(x), f32(y)}, rl.WHITE)
+	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{x, y}, rl.WHITE)
 }
 
 unload_all_sheets :: proc() {

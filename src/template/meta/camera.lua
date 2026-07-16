@@ -11,7 +11,7 @@ function camera.stop() end
 ---moves the viewport to this position.
 ---@param x number
 ---@param y number
-function camera.translate(x, y) end
+function camera.position(x, y) end
 
 ---scales the viewport
 ---@param scale number

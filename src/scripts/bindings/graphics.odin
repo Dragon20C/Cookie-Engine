@@ -1,6 +1,5 @@
 package bindings
 // Graphics bindings.
-import "core:c"
 
 import conf "../../config"
 import engine "../../engine"
@@ -156,8 +155,8 @@ sprite :: proc "c" (L: ^lua.State) -> i32 {
 	engine.draw_sprite(
 		i32(lua.tointeger(L, 1)),
 		i32(lua.tointeger(L, 2)),
-		i32(lua.tonumber(L, 3)),
-		i32(lua.tonumber(L, 4)),
+		f32(lua.tonumber(L, 3)),
+		f32(lua.tonumber(L, 4)),
 		flipped
 	)
 	return 0

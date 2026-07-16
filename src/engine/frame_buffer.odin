@@ -53,7 +53,7 @@ stop_camera :: proc() {
 	rl.EndMode2D()
 }
 
-translate_camera :: proc(x : f32,y : f32) {
+position_camera :: proc(x : f32,y : f32) {
 	camera.target = {x,y}
 }
 
