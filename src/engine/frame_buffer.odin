@@ -6,11 +6,17 @@ import rl "vendor:raylib"
 
 
 render_texture: rl.RenderTexture2D
+camera : rl.Camera2D
 
 create_frame_buffer :: proc() {
 	width, height := i32(conf.Config.game_width), i32(conf.Config.game_height)
 	render_texture = rl.LoadRenderTexture(width, height)
 	rl.SetTextureFilter(render_texture.texture, rl.TextureFilter.POINT)
+
+	camera.target = {0.0,0.0}
+	camera.offset = {0.0, 0.0}
+	camera.rotation = 0.0
+    camera.zoom = 1.0
 }
 
 render_frame_buffer :: proc(scale: f32) {
@@ -36,4 +42,29 @@ render_frame_buffer :: proc(scale: f32) {
 		rl.WHITE,
 	)
 	rl.EndDrawing()
+}
+
+start_camera :: proc() {
+	rl.BeginMode2D(camera)
+
+}
+
+stop_camera :: proc() {
+	rl.EndMode2D()
+}
+
+translate_camera :: proc(x : f32,y : f32) {
+	camera.target = {x,y}
+}
+
+rotate_camera :: proc(angle : f32) {
+	camera.rotation = angle
+}
+
+scale_camera :: proc(scale : f32) {
+	camera.zoom = scale
+}
+
+camera_offset :: proc(x : f32, y : f32) {
+	camera.offset = {x,y}
 }

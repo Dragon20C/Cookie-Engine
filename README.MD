@@ -39,7 +39,7 @@ Replace [value] with the actual value for example [title] becomes game_title
 
 `cookie dev [path]` Runs the project in dev mode, cookie.IS_DEV becomes true.
 
-`cookie version` Exports the game project into a export directory inside the project.
+`cookie export` Exports the game project into a export directory inside the project.
 
 `cookie version` Prints the version of cookie currently installed.
 
@@ -97,11 +97,11 @@ gfx.circle(x, y, radius, color) -- draws a filled circle onto the screen
 gfx.line(x1, y1, x2, y2, color) -- draws a line between two points
 gfx.text(text, x, y, size, color) -- renders text
 
-gfx.load_sheet(cell_width, cell_height, path) -- Loads a sprite sheet into the engine
+gfx.load_sheet(cell_width, cell_height, path) -- Loads a sprite sheet into the engine, returns an sheet id
 gfx.unload_sheet(sheet) -- unloads the sprite sheet from the engine saving memory
 gfx.sprite(sheet, frame_id, x, y, flip) -- draws the sprite sheet based on frame id or index
 
-sfx.load(path) -- loads asound effect into the engine, this returns an id
+sfx.load(path) -- loads a sound effect into the engine, this returns an id
 sfx.unload(sound_id) -- using the id you get from sfx.load you can unload the sound to save memory
 sfx.play(sound_id) -- plays a sound effect based on the id that sfx.load provides
 

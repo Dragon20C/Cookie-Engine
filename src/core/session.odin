@@ -58,6 +58,7 @@ session :: proc() {
 		update(delta_time)
 
 		rl.BeginTextureMode(engine.render_texture)
+
 		draw(delta_time)
 
 		rl.EndTextureMode()
