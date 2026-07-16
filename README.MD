@@ -3,15 +3,16 @@
 Cookie engine is a 2D game engine perfect for making pixel art games using lua 5.4, **Cookie** uses Odin lang + raylib to run your games, it is powerful and easy to use, it is made by me Dragon20C.
 
 <p align="center">WARNING</p> 
-<p align="center"> Cookie engine is experimental and does and will have bugs and issues. </p>
+<p align="center"> Cookie engine is experimental, I welcome contributors to improve the engine </p>
 
 <p align="center"> This project is licensed under the GNU GPL v3.0. See the LICENSE file for details. </p>
 
 ## Installation
 
-Note: the install scripts exists in this repo in installers directory.
+>For the people who don't like downloading unknown scripts, the install.sh script is located in the repo in installers directory.
 
-## (Linux/MacOS)
+
+**(Linux/MacOS)**
 
 Downloading the install script, run these commands in your terminal:
 
@@ -21,123 +22,131 @@ chmod +x install.sh
 ./install.sh
 ```
 
-The installer will:
+**(Windows)**
 
-- Download the latest Cookie Engine release.
-- Install it to `~/CookieEngine`.
-- Add `COOKIE_ENGINE_ROOT` to your `~/.bashrc`.
-- Add Cookie Engine to your `PATH`.
+>[!NOTE] umm sorry, I have not made one yet...
 
+## Cookie Usage
+Cookie has multiple commands that you can use.
 
+`new, dev, run, export, version`
 
-## (Windows)
-umm sorry, I have not made one yet...
+Replace [value] with the actual value for example [title] becomes game_title
 
-**Cookie Usage**
-Commands
-- **new**
- 
-`cookie new cool_game desired/path`
+`cookie new [title] [path]` Creates a new project.
 
-creates a new project, path is optional it will create it in the current dir.
+`cookie run [path]` Runs the project in release mode, cookie.IS_DEV is false.
 
+`cookie dev [path]` Runs the project in dev mode, cookie.IS_DEV becomes true.
 
-- **run**
+`cookie version` Exports the game project into a export directory inside the project.
 
-runs the project with debug mode off, cookie.IS_DEV is false.
+`cookie version` Prints the version of cookie currently installed.
 
+**Game Loop**
 
-`cookie run desired/path`
-- **dev**
+config.lua
+>config.lua is where the project stores data about the project, the title of the game, id and the width and height
 
-When developing a game dev mode allows you to debug using cookie.IS_DEV which becomes true.
+```lua
+function _config()
+	---@type Cookie.Config
+	return {
+		title = "Game Title",
+		id = "UserName.GameTitle",
+		width = 426,
+		height = 240,
+	}
+end
+```
+main.lua
+> main.lua is the entry point of the game, everything starts from here
+```lua
+function _init()
+	cookie.scale_window(2)
+end
 
+function _update(dt)
+end
 
-`cookie dev desired/path`
-- **export**
-
-`cookie export desired/path`
-
-exports the project to the avaliable oses e.g Linux, Windows, MacOS.
-
-
-- **version**
-
-`cookie version`
-
-prints the currently installed version of cookie.
-
-
-## GFX usage
-
-The GFX library is how you draw in the game engine, you can only draw in the draw function, attempts to draw outside will not work or function at all.
-Clears the screen with the selected color **watermelon**
-
+function _draw()
     gfx.clear(gfx.WATERMELON)
+end
+```
 
-There is in total 16 colors avaliable to you, you can see the options in meta/gfx.lua.
+## Cheatsheet
 
-Draws a rectangle onto the screen.
+```lua
+cookie.WIDTH
+cookie.HEIGHT
+cookie.IS_DEV
+cookie.Elapsed
 
-    gfx.rectangle(x, y, width, height, color)
+cookie.FPS() -- gets the fps of the engine
+cookie.scale_window(multiplier) -- scales the window based on a multiplier (integer)
+cookie.set_fullscreen(enable) -- sets it fullscreen or not based on enable (bool)
 
-Draws a circle onto the screen.
+-- 16 colors avaliable out of the box
 
-    gfx.circle(x, y, radius, color)
+gfx.BLACK gfx.CLAY gfx.CORAL gfx.ORANGE gfx.SAND gfx.HONEY gfx.IVORY gfx.OLIVE gfx.MINT
+gfx.JADE gfx.NAVY gfx.AZURE gfx.AMETHYST gfx.CANDY gfx.WATERMELON gfx.ROSE
 
-Draws a line between 2 points.   
+gfx.clear(color) -- clears the whole screen with a color e.g gfx.WATERMELON
+gfx.rectangle(x, y, width, height, color) -- draws a filled rectangle onto the screen
+gfx.circle(x, y, radius, color) -- draws a filled circle onto the screen
+gfx.line(x1, y1, x2, y2, color) -- draws a line between two points
+gfx.text(text, x, y, size, color) -- renders text
 
-    gfx.line(x1, y1, x2, y2, color)
-Draws text onto the screen at x and y positions with size and color.
+gfx.load_sheet(cell_width, cell_height, path) -- Loads a sprite sheet into the engine
+gfx.unload_sheet(sheet) -- unloads the sprite sheet from the engine saving memory
+gfx.sprite(sheet, frame_id, x, y, flip) -- draws the sprite sheet based on frame id or index
 
-    gfx.text(text, x, y, size, Color)
+sfx.load(path) -- loads asound effect into the engine, this returns an id
+sfx.unload(sound_id) -- using the id you get from sfx.load you can unload the sound to save memory
+sfx.play(sound_id) -- plays a sound effect based on the id that sfx.load provides
 
-Loads a sprite sheet to the engine, you will need to store this to  a variable
+input.KEY_A .. input.KEY_9
 
-     gfx.load_sheet(cell_width, cell_height, path)
+input.KEY_ENTER input.KEY_ESCAPE input.KEY_SPACE input.KEY_TAB input.KEY_BACKSPACE
+input.KEY_LEFT input.KEY_RIGHT input.KEY_UP input.KEY_DOWN input.KEY_LEFT_SHIFT
+input.KEY_RIGHT_SHIFT input.KEY_LEFT_CTRL input.KEY_RIGHT_CTRL input.KEY_LEFT_ALT
+input.KEY_RIGHT_ALT input.KEY_INSERT input.KEY_DELETE input.KEY_HOME input.KEY_END
+input.KEY_PAGE_UP input.KEY_PAGE_DOWN
 
-Unload a sprite sheet from the engine, this saves memory
+input.MOUSE_LEFT
+input.MOUSE_RIGHT
+input.MOUSE_MIDDLE
 
-     gfx.unload_sheet(sheet)
+input.mouse_position() -- returns the mouse position inside the window
+input.create_action(action) -- creates an blank input map
+input.bind(action, key) -- binds an action to a input.KEY
+input.unbind(action, key) -- unbinds a key on an action
+input.get_keycodes(action) -- gets all keys attached to the action
 
-Draws a sprite from the sprite sheet, note flip is optional and frame_id wraps around.
+input.pressed(action) -- checks if an action has been pressed
+input.held(action) -- checks if the action is currently being held down
+input.released(action) -- checks if the action has been released
 
-     gfx.sprite(sheet, frame_id, x, y, flip)
+input.key_pressed(key_code) -- checks directly to a key, not recommened, use only for debugging
+input.key_held(key_code) -- checks if a key is held down input.KEY
+input.key_released(key_code) -- checks for release of a key
 
-## Input usage
-    input.mouse_position()
-Gets the mouse position inside the window.
+utils.TAU
+utils.DEG2RAD -- degrees to radians
+utils.RAD2DEG -- radians to degrees
 
-    input.pressed(input.RIGHT)
-   Checks if you have pressed right key **once**.
-
-    input.released(input.RIGHT)
-Checks if you have released right key **once**.
-
-    input.held(input.RIGHT)
-Checks if you are holding the right key.
-
-    input.to_string(input.RIGHT)
-A simple way of converting inputs into strings.
-
-## Event usage
-    event.connect(event_id, func)
-You can connect functions to an event system, event_id is simply an integer.
-
-    event.disconnect(event_id,func)
-   You can remove a function from the event.
-
-    event.call(event_id, ...)
-This is how you call the event, note the ... this means you can put as many params as you want
-The only limitation is you cant use tables.
-
-    input.held(input.RIGHT)
-Checks if you are holding the right key.
-
-    input.to_string(input.RIGHT)
-A simple way of converting inputs into strings.
-
-## Audio usage
-    sfx.play("sfx title")
-The engine loads all the sound effects in the sfx folder, you can play a sfx simply by typing its name
-There is more but I am lazy and I plan on actually reworking the whole audio system, for now you can just play a single sound effect.
+utils.lerp(a, b, t) -- linearly interpolates between two numbers
+utils.clamp(value, min, max) -- clamps the value between min and max
+utils.clamp_01(value) -- clamps the value between 0.0 and 1.0
+utils.sign(value) -- returns the sign of the value either 1 or -1
+utils.round(value) -- brings value to the closet whole number
+utils.map(value, in_min, in_max, out_min, out_max) -- maps a range onto another
+utils.distance(x1, y1, x2, y2) -- returns the distance between two points
+utils.distance_squared(x1, y1, x2, y2) -- returns the squared distance between two points
+utils.dot_product(ax, ay, bx, by) -- returns the dot product of two points
+utils.angle(x, y) -- returns the angle of a vector, useful for moving in 2d space
+utils.angle_to(x1, y1, x2, y2) -- returns the angle from point 1 to point 2
+utils.wrap(value, min, max) -- wraps the value around if its lower or higher
+utils.approximately(a, b, epsilon) -- checks if a and b are close, epsilon is optional
+utils.normalize(x, y) -- limits the vectors length to 1
+```
