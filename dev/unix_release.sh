@@ -17,7 +17,10 @@ main(){
 
 	echo "Syncing runtime files..."
 
-	rm -f "$ENGINE_ROOT/modules/module_loader.odin"
+	if [[ ! -e FILE ]] then
+		mkdir $ENGINE_ROOT
+	fi
+
 	cp -r $TEMPLATE_ROOT "$ENGINE_ROOT/"
 	cp version.txt "$ENGINE_ROOT/"
 	cp LICENSE.txt "$ENGINE_ROOT/"
