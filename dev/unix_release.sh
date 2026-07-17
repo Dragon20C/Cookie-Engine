@@ -17,7 +17,7 @@ main(){
 
 	echo "Syncing runtime files..."
 
-	if [[ ! -e FILE ]] then
+	if [[ ! -e $ENGINE_ROOT ]] then
 		mkdir $ENGINE_ROOT
 	fi
 
