@@ -157,6 +157,13 @@ input.key_pressed(key_code) -- checks directly to a key, not recommened, use onl
 input.key_held(key_code) -- checks if a key is held down input.KEY
 input.key_released(key_code) -- checks for release of a key
 
+camera.start() -- sprites drawn after dont follow the camera
+camera.stop() -- sprites drawn after follow the camera
+camera.position(x, y) -- sets the camera position follow target e.g player
+camera.scale(scale) -- scales the camera
+camera.rotate(angle) -- rotates the camera to the angle
+camera.offset(x,y) -- offsets the camera by taking away from position
+
 utils.TAU
 utils.DEG2RAD -- degrees to radians
 utils.RAD2DEG -- radians to degrees
