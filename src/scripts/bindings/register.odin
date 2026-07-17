@@ -8,6 +8,7 @@ register_bindings :: proc(L: ^lua.State) {
 	register_graphics(L)
 	register_inputs(L)
 	register_audio(L)
+	register_camera(L)
 
 }
 
