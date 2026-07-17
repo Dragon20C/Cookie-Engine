@@ -7,6 +7,11 @@ Cookie engine is a 2D game engine perfect for making pixel art games using lua 5
 
 <p align="center"> This project is licensed under the GNU GPL v3.0. See the LICENSE file for details. </p>
 
+>Cookie Features:
+- Hot-reloading by pressing F5
+- Lua 5.4 based scripting
+- 16 Colors with the ability to change it based on a hex file (Im really running out of things to write)
+
 ## Installation
 
 >For the people who don't like downloading unknown scripts, the install.sh script is located in the repo in installers directory.
@@ -182,4 +187,10 @@ utils.angle_to(x1, y1, x2, y2) -- returns the angle from point 1 to point 2
 utils.wrap(value, min, max) -- wraps the value around if its lower or higher
 utils.approximately(a, b, epsilon) -- checks if a and b are close, epsilon is optional
 utils.normalize(x, y) -- limits the vectors length to 1
+
+rect.new(x, y, width, height) -- creates a rect table
+rect:intersects(other) -- returns true if a rect is overlapping
+rect:containsPoint(x, y) -- returns true if a point exists inside the rect
+rect:setPosition(x, y) -- sets the top left position of the rect
+rect:move(dx, dy) -- this applys motion to the rects x and y
 ```

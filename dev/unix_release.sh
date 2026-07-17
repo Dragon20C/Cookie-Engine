@@ -3,7 +3,6 @@
 set -euo pipefail
 
 ENGINE_ROOT="$HOME/CookieEngine"
-MODULES_ROOT="./src/scripts/modules"
 TEMPLATE_ROOT="./src/template"
 
 main(){
@@ -18,7 +17,6 @@ main(){
 
 	echo "Syncing runtime files..."
 
-	cp -r $MODULES_ROOT "$ENGINE_ROOT/"
 	rm -f "$ENGINE_ROOT/modules/module_loader.odin"
 	cp -r $TEMPLATE_ROOT "$ENGINE_ROOT/"
 	cp version.txt "$ENGINE_ROOT/"
