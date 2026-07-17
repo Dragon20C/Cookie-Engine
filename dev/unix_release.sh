@@ -28,7 +28,9 @@ main(){
 	echo "Done."
 
 	while true; do
+	echo "This is only for the developer (Dragon20C), please ignore -> [n]"
     read -rp "Would you like to zip it for release? [y/n]: " answer
+
 
     case "$answer" in
         y|Y|yes|YES)
@@ -45,22 +47,6 @@ main(){
     esac
 	done
 
-	while true; do
-    read -rp "Would you like to run the template project? [y/n]: " answer
-
-    case "$answer" in
-        y|Y|yes|YES)
-            cookie dev ./src/template
-            break
-            ;;
-        n|N|no|NO)
-            break
-            ;;
-        *)
-            echo "Please enter y or n."
-            ;;
-    esac
-	done
 }
 
 require_command() {

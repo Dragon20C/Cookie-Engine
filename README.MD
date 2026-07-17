@@ -26,6 +26,32 @@ chmod +x unix_install.sh
 
 >[!NOTE] umm sorry, I have not made one yet...
 
+## Building
+
+>Linux / MacOS
+
+first clone the repo
+
+`git clone https://github.com/Dragon20C/Cookie-Engine`
+
+change directory into it
+
+`cd ./Cookie-Engine`
+
+give permission to execute
+
+`chmod +x ./dev/unix_dev.sh`
+
+run the script
+
+`./dev/unix_dev.sh`
+
+
+>Windows
+
+Sorry im a linux user so making for windows is a little more difficult.
+Sorry for treating you like a second class citizen...
+
 ## Cookie Usage
 Cookie has multiple commands that you can use.
 
