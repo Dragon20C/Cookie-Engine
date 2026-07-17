@@ -1,57 +1,39 @@
 package module_loader
 
 import lua "vendor:lua/5.4"
-import conf "../../config"
 import "core:fmt"
-import "core:strings"
-import "core:path/filepath"
-import "core:os"
 import err "../../error"
 
+LUA_UTILS :: cstring(#load("utils.lua",cstring))
+RECT_UTILS :: cstring(#load("rect.lua",cstring))
+
 load_modules :: proc(L : ^lua.State) {
-	load_module(L, "utils.lua", "utils")
-	load_module(L, "rect.lua", "rect")
+	load_module(L, LUA_UTILS, "utils")
+	load_module(L, RECT_UTILS, "rect")
 }
 
-load_module :: proc(L : ^lua.State, module_title : string, title: cstring) {
-	ok, path := lua_file_exists(module_title)
+load_module :: proc(L : ^lua.State, lib : cstring, title : cstring) {
+	load_err := lua.L_loadstring(L,lib)
 
-	if !ok {
-		fmt.println("Failed to find ", module_title, " in modules directory.")
-		return
-	}
-
-	status := lua.L_loadfile(L, strings.clone_to_cstring(path))
-	if status != lua.Status.OK {
-		fmt.println("Failed to load ", module_title, " from: ", path)
+	if load_err != .OK{
+		err.report_error(err.Error{err.ErrorType.Runtime,"Failed to load module"})
+		fmt.println("Module: ", title)
 		return
 	}
 
 	call_status := lua.pcall(L, 0, 1, 0)
 	if call_status != 0 {
-		fmt.println("Failed to run ", module_title, " from: ", path)
+		err.report_error(err.Error{err.ErrorType.Runtime,"Failed to run the module"})
+		fmt.println("Module: ", title)
 		return
 	}
 
-	// ❗ check stack top
 	if lua.isnil(L, -1) {
-		fmt.println(module_title, " returned nil")
+		fmt.println(title, " returned nil")
 		lua.pop(L, 1)
 		return
 	}
 
 	lua.setglobal(L, title)
-}
 
-lua_file_exists :: proc(title: string) -> (b32, string) {
-	path, err := filepath.join({ conf.Config.engine_dir, "modules", title})
-	if err != nil {
-		return false, ""
-	}
-
-	if os.is_file(path) {
-		return true, path
-	}
-
-	return false, ""
 }
