@@ -10,6 +10,7 @@ Cookie engine is a 2D game engine perfect for making pixel art games using lua 5
 >Cookie Features:
 - Hot-reloading by pressing F5
 - Lua 5.4 based scripting
+- traits, see an example in examples/traits
 - 16 Colors with the ability to change it based on a hex file (Im really running out of things to write)
 
 ## Installation

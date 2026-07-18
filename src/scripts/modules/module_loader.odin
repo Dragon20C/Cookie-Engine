@@ -5,11 +5,14 @@ import "core:fmt"
 import err "../../error"
 
 LUA_UTILS :: cstring(#load("utils.lua",cstring))
-RECT_UTILS :: cstring(#load("rect.lua",cstring))
+LUA_RECT :: cstring(#load("rect.lua",cstring))
+LUA_TRAIT :: cstring(#load("trait.lua",cstring))
+
 
 load_modules :: proc(L : ^lua.State) {
 	load_module(L, LUA_UTILS, "utils")
-	load_module(L, RECT_UTILS, "rect")
+	load_module(L, LUA_RECT, "rect")
+	load_module(L,LUA_TRAIT,"trait")
 }
 
 load_module :: proc(L : ^lua.State, lib : cstring, title : cstring) {

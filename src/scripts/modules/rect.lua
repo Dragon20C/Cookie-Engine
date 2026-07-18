@@ -2,12 +2,15 @@ local rect = {}
 rect.__index = rect
 
 function rect.new(x, y, width, height)
-	return setmetatable({
-		x = x,
-		y = y,
-		width = width,
-		height = height,
-	}, rect)
+    local self = {}
+    setmetatable(self, rect)
+
+    self.x = x
+    self.y = y
+    self.width = width
+    self.height = height
+
+	return self
 end
 
 function rect:__tostring()
