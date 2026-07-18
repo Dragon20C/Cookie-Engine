@@ -81,7 +81,13 @@ init :: proc() {
 		lua.pop(L, 1)
 		return
 	}
-	lua.call(L, 0, 0)
+	err := lua.pcall(L, 0, 0, 0)
+
+	if int(err) != int(lua.OK){
+		msg := lua.tostring(L, -1)
+		fmt.println("Lua Error : ", msg)
+		lua.pop(L, 1)
+	}
 }
 
 update :: proc(dt: f32) {
@@ -91,7 +97,14 @@ update :: proc(dt: f32) {
 		return
 	}
 	lua.pushnumber(L, lua.Number(dt))
-	lua.call(L, 1, 0)
+
+	err := lua.pcall(L, 1, 0, 0)
+
+	if int(err) != int(lua.OK){
+		msg := lua.tostring(L, -1)
+		fmt.println("Lua Error : ", msg)
+		lua.pop(L, 1)
+	}
 }
 
 draw :: proc(dt: f32) {
@@ -103,7 +116,13 @@ draw :: proc(dt: f32) {
 	}
 	lua.pushnumber(L, lua.Number(dt))
 
-	lua.call(L, 1, 0)
+	err := lua.pcall(L, 1, 0, 0)
+
+	if int(err) != int(lua.OK){
+		msg := lua.tostring(L, -1)
+		fmt.println("Lua Error : ", msg)
+		lua.pop(L, 1)
+	}
 }
 
 start_lua_vm :: proc() {

@@ -1,22 +1,23 @@
 
+
 local traits = {
 	draw = trait.required("draw")
 }
 
 local chicken = {}
 chicken.sheet_id = gfx.load_sheet(16, 16, "sprites.png")
-chicken.rect = rect.new((cookie.WIDTH * 0.5) - 8,(cookie.HEIGHT * 0.5) - 8,16,16)
+chicken.x = (cookie.WIDTH * 0.5) - 8
+chicken.y = (cookie.HEIGHT * 0.5) - 8
 chicken.speed = 100.0
 chicken.flip = false
 
 trait.implement(chicken, traits)
 
 function chicken:draw()
-	gfx.sprite(self.sheet_id,2,chicken.rect.x,chicken.rect.y,chicken.flip)
+	gfx.sprite(self.sheet_id,2,chicken.x,chicken.y,chicken.flip)
 end
 
 function _init()
-	print(chicken.rect.x)
     cookie.scale_window(2)
     camera.offset(cookie.WIDTH * 0.5,cookie.HEIGHT * 0.5)
 end
@@ -44,9 +45,10 @@ function _update(dt)
 
     dir.x, dir.y = utils.normalize(dir.x, dir.y)
 
-    chicken.rect:move((dir.x * chicken.speed * dt),(dir.y * chicken.speed * dt))
+    chicken.x = chicken.x + (dir.x * chicken.speed * dt)
+    chicken.y = chicken.y + (dir.y * chicken.speed * dt)
 
-    camera.position(chicken.rect.x,chicken.rect.y)
+    camera.position(chicken.x,chicken.y)
 
 end
 
