@@ -29,10 +29,10 @@ main :: proc() {
 		cli.create_project(args)
 
 	case "run":
-		cli.start_project(args[1], false)
+		cli.start_project(args, false)
 
 	case "dev":
-		cli.start_project(args[1], true)
+		cli.start_project(args, true)
 
 	case "export":
 		cli.export_project(args)

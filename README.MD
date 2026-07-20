@@ -30,7 +30,7 @@ chmod +x unix_install.sh
 
 **(Windows)**
 
->[!NOTE] umm sorry, I have not made one yet...
+>umm sorry, I have not made one yet...
 
 ## Building
 

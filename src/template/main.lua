@@ -11,8 +11,11 @@ chicken.flip = false
 
 trait.implement(chicken, traits)
 
+local rot_speed = 32
+local rot = 0.0
+
 function chicken:draw()
-	gfx.sprite(self.sheet_id,2,chicken.rect.x,chicken.rect.y,chicken.flip)
+	gfx.sprite(self.sheet_id,2,chicken.rect.x,chicken.rect.y,chicken.flip,rot)
 end
 
 function _init()
@@ -46,7 +49,11 @@ function _update(dt)
 
     chicken.rect:move((dir.x * chicken.speed * dt),(dir.y * chicken.speed * dt))
 
-    camera.position(chicken.rect.x,chicken.rect.y)
+    camera.position(chicken.rect.x, chicken.rect.y)
+
+    rot = rot + rot_speed * dt
+
+    rot = utils.wrap(rot,0,360)
 
 end
 

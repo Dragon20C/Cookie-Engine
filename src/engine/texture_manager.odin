@@ -78,6 +78,7 @@ load_sheet :: proc(cell_width: i32, cell_height: i32, sheet_path: cstring) -> i3
 	}
 
 	texture := rl.LoadTexture(strings.clone_to_cstring(sheet_path))
+	rl.SetTextureFilter(texture, rl.TextureFilter.POINT)
 	id := i32(texture.id)
 
 	columns := f32(texture.width) / f32(cell_width)
@@ -101,7 +102,7 @@ unload_sheet :: proc(sheet_id: i32) {
 	}
 }
 
-draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: f32, y: f32, flipped : b32) {
+draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: f32, y: f32, flipped: b32, rot: f32) {
 	context = runtime.default_context()
 
 	if !(sheet_id in sheets) {
@@ -114,13 +115,37 @@ draw_sprite :: proc(sheet_id: i32, frame_id: i32, x: f32, y: f32, flipped : b32)
 	cell_x := f32((frame_id % sheet.cols) * i32(sheet.cell_width))
 	cell_y := f32((frame_id / sheet.cols) * i32(sheet.cell_height))
 
-	rect := rl.Rectangle{cell_x, cell_y, f32(sheet.cell_width), f32(sheet.cell_height)}
-
-	if flipped {
-		rect.width = -rect.width
+	src := rl.Rectangle{
+		cell_x,
+		cell_y,
+		f32(sheet.cell_width),
+		f32(sheet.cell_height),
 	}
 
-	rl.DrawTextureRec(sheet.texture, rect, rl.Vector2{x, y}, rl.WHITE)
+	if flipped {
+		src.width = -src.width
+	}
+
+	dst := rl.Rectangle{
+		x,
+		y,
+		f32(sheet.cell_width),
+		f32(sheet.cell_height),
+	}
+
+	origin := rl.Vector2{
+		f32(sheet.cell_width) / 2,
+		f32(sheet.cell_height) / 2,
+	}
+
+	rl.DrawTexturePro(
+		sheet.texture,
+		src,
+		dst,
+		origin,
+		rot,
+		rl.WHITE,
+	)
 }
 
 unload_all_sheets :: proc() {

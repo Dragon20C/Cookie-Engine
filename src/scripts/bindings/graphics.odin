@@ -145,10 +145,15 @@ sprite :: proc "c" (L: ^lua.State) -> i32 {
 		return 0
 	}
 
-	flipped :b32 = false
+	flipped : b32 = false
+	rot : f32 = 0.0
 
 	if lua.gettop(L) >= 5 && lua.isboolean(L,5) {
 		flipped = lua.toboolean(L,5)
+	}
+
+	if lua.gettop(L) >= 6 && lua.isnumber(L,6) {
+		rot = f32(lua.tonumber(L,6))
 	}
 
 	context = runtime.default_context()
@@ -157,7 +162,8 @@ sprite :: proc "c" (L: ^lua.State) -> i32 {
 		i32(lua.tointeger(L, 2)),
 		f32(lua.tonumber(L, 3)),
 		f32(lua.tonumber(L, 4)),
-		flipped
+		flipped,
+		rot
 	)
 	return 0
 }

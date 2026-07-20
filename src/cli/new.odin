@@ -37,13 +37,22 @@ create_project :: proc(args: []string) {
 	if project_path_valid(args) {
 		project_path = args[2]
 	} else {
+		project_path ,wd_err := os.get_working_directory(runtime.default_allocator())
+		if wd_err != os.ERROR_NONE {
+			err.report_error(
+				err.Error {
+					err.ErrorType.Warning,
+					"Failed to get the working directory.",
+				},
+			)
+			return
+		}
 		err.report_error(
 			err.Error {
-				err.ErrorType.Fatal,
-				"The written directory is invalid, make sure the directory exists, Cookie does not create new directories only the project directory.",
+				err.ErrorType.Warning,
+				"Directory path was not provided, using working directory.",
 			},
 		)
-		return
 	}
 
 	clean_err := runtime.Allocator_Error.None

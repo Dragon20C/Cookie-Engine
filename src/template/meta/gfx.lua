@@ -71,4 +71,5 @@ function gfx.unload_sheet(sheet) end
 --- @param x number The x-coordinate to draw the sprite at.
 --- @param y number The y-coordinate to draw the sprite at.
 --- @param flip? boolean Flips the sprite.
-function gfx.sprite(sheet, frame_id, x, y, flip) end
+--- @param rot? number Rotates the sprite to an angle in degrees.
+function gfx.sprite(sheet, frame_id, x, y, flip, rot) end

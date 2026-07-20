@@ -5,7 +5,13 @@ import core "../core"
 import err "../error"
 
 
-start_project :: proc(project_dir: string, is_dev: bool) {
+start_project :: proc(args: []string, is_dev: bool) {
+	project_dir : string = "."
+
+	if len(args) >= 2 {
+		project_dir = args[1]
+	}
+
 	conf.set_project_dir(project_dir)
 	conf.set_project_is_dev(is_dev)
 
