@@ -51,16 +51,19 @@ function _update(dt)
 
     camera.position(chicken.rect.x, chicken.rect.y)
 
-    rot = rot + rot_speed * dt
+    -- rot = rot + rot_speed * dt
 
-    rot = utils.wrap(rot,0,360)
+    -- rot = utils.wrap(rot,0,360)
 
 end
 
-function _draw()
-    gfx.clear(gfx.MINT)
+function _draw(dt)
+    gfx.clear(gfx.AMETHYST)
 
+    local sign_y = math.sin(cookie.Elapsed * 4 ) * 8 - 4
+    gfx.circle(cookie.WIDTH / 2,sign_y,32,gfx.MINT)
 
+    gfx.rectangle(cookie.WIDTH / 2, cookie.HEIGHT / 2,32,32, gfx.MINT)
     camera.start()
 
     gfx.rectangle(0.0, 0.0, cookie.WIDTH, 32, gfx.WATERMELON)

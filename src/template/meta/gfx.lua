@@ -29,7 +29,8 @@ function gfx.clear(color) end
 ---@param width number The width of the rectangle.
 ---@param height number The height of the rectangle.
 ---@param color integer The color of the rectangle. Use one of the predefined colors in gfx.
-function gfx.rectangle(x, y, width, height, color) end
+---@param fill? boolean If the rectangle should be filled in or not default is filled.
+function gfx.rectangle(x, y, width, height, color, fill) end
 
 --- Draws a circle on the screen.
 ---@param x number The x-coordinate of the circle's center.

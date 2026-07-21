@@ -78,14 +78,19 @@ rectangle :: proc "c" (L: ^lua.State) -> i32 {
 		return 0
 	}
 
-	r_x := i32(lua.tonumber(L, 1))
-	r_y := i32(lua.tonumber(L, 2))
-	r_width := i32(lua.tonumber(L, 3))
-	r_height := i32(lua.tonumber(L, 4))
+	r_x := f32(lua.tonumber(L, 1))
+	r_y := f32(lua.tonumber(L, 2))
+	r_width := f32(lua.tonumber(L, 3))
+	r_height := f32(lua.tonumber(L, 4))
 	color := i32(lua.tointeger(L, 5))
+	filled := true
+
+	if lua.gettop(L) >= 6 && lua.isboolean(L,6) {
+		filled = bool(lua.toboolean(L,6))
+	}
 
 	context = runtime.default_context()
-	engine.rectangle(r_x, r_y, r_width, r_height, color)
+	engine.rectangle(r_x, r_y, r_width, r_height, color,filled)
 
 	return 0
 }
@@ -95,10 +100,10 @@ circle :: proc "c" (L: ^lua.State) -> i32 {
 		return 0
 	}
 
-	x := i32(lua.tonumber(L, 2))
-	y := i32(lua.tonumber(L, 3))
-	radius := f32(lua.tonumber(L, 4))
-	color := i32(lua.tointeger(L, 5))
+	x := i32(lua.tonumber(L, 1))
+	y := i32(lua.tonumber(L, 2))
+	radius := f32(lua.tonumber(L, 3))
+	color := i32(lua.tointeger(L, 4))
 
 	context = runtime.default_context()
 	engine.circle(x, y, radius, color)

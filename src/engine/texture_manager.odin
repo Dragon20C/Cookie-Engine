@@ -45,9 +45,15 @@ clear :: proc(color_index: i32) {
 	rl.ClearBackground(color)
 }
 
-rectangle :: proc(x: i32, y: i32, width: i32, height: i32, color_index: i32) {
+rectangle :: proc(x: f32, y: f32, width: f32, height: f32, color_index: i32, filled : bool) {
 	color := palette[color_index]
-	rl.DrawRectangle(x, y, width, height, color)
+	if filled{
+		rl.DrawRectangleRec(rl.Rectangle{x,y, width,height},color)
+		// rl.DrawRectangle(x, y, width, height, color)
+	} else {
+		rl.DrawRectangleLinesEx(rl.Rectangle{x, y, width, height},1,color)
+		// rl.DrawRectangleLines(x, y, width, height, color)
+	}
 }
 
 circle :: proc(x: i32, y: i32, radius: f32, color_index: i32) {
